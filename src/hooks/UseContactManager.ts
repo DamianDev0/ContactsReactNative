@@ -9,7 +9,6 @@ import {request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 export const useFormContact = () => {
   const {saveContactToStorage} = useContacts();
 
-  // Estado para el formulario de contacto
   const [form, setForm] = useState<Contact>({
     name: '',
     phone: '',

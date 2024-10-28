@@ -35,7 +35,7 @@ const ContactDetailScreen = ({ route, navigation }: any) => {
     <View style={styles.container}>
       <View style={styles.containerImage} />
       {contact.photo && (
-        <Image source={{ uri: contact.photo }} style={styles.contactImage} />
+        <Image source={{ uri: contact.photo }} style={styles.contactImage}  />
       )}
       <Text style={styles.contactName}>{contact.name}</Text>
       <View style={styles.rowContainer}>
@@ -47,11 +47,10 @@ const ContactDetailScreen = ({ route, navigation }: any) => {
       <View style={styles.emptySpace} />
 
       <View style={styles.buttonContainer}>
-        <GenericButton title="Eliminar" onPress={handleDelete} color="#000" />
-        <GenericButton title="Editar" onPress={handleEdit} color="#000" />
+        <GenericButton title="Eliminar" onPress={handleDelete} color="#000"  width={150} />
+        <GenericButton title="Editar" onPress={handleEdit} color="#000" width={150} />
       </View>
 
-      {/* Delete Modal */}
       <DeleteModal
         visible={isDeleteModalVisible}
         onClose={() => setDeleteModalVisible(false)}
@@ -59,7 +58,6 @@ const ContactDetailScreen = ({ route, navigation }: any) => {
         contactName={contact.name}
       />
 
-      {/* Edit Modal */}
       <EditModal
         visible={isEditModalVisible}
         onClose={() => setEditModalVisible(false)}
@@ -73,10 +71,9 @@ const ContactDetailScreen = ({ route, navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
-  // Mantén los estilos como están
   container: {
     flex: 1,
-    marginTop: 70,
+    marginTop: 200,
     alignItems: 'center',
     padding: 20,
   },
@@ -128,8 +125,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     justifyContent: 'center',
+    flexDirection: 'row',
     alignItems: 'center',
-    width: '100%',
+    width: 300,
     marginBottom: 30,
   },
 });
