@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 interface SearchBarProps {
   placeholder: string;
   onSearch: (searchTerm: string) => void;
+
 }
 
 const SearchBar = ({ placeholder, onSearch }: SearchBarProps) => {

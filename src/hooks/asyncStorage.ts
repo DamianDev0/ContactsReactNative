@@ -1,7 +1,7 @@
-import {useCallback, useState, useEffect} from 'react';
-import {Alert} from 'react-native';
+import { useCallback, useState, useEffect } from 'react';
+import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Contact} from '../interfaces/Contact.interface';
+import { Contact } from '../interfaces/Contact.interface';
 
 export const useContacts = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -11,12 +11,13 @@ export const useContacts = () => {
     try {
       const storedContacts = await AsyncStorage.getItem('contacts');
       if (storedContacts) {
-        setContacts(JSON.parse(storedContacts) as Contact[]);
+        const parsedContacts = JSON.parse(storedContacts) as Contact[];
+        setContacts(parsedContacts);
       }
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Error loading contacts';
-      console.error('Error al cargar contactos:', errorMessage);
+      console.error('Error loading contacts:', errorMessage);
       setError(errorMessage);
       Alert.alert('Error', errorMessage);
     }
