@@ -1,33 +1,40 @@
-import React, { useState } from 'react';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import InputGeneric from '../../../components/GenericInput';
 import GenericButton from '../../../components/GenericButton';
 import useLogin from '../hook/login.hook';
 
-const { width } = Dimensions.get('screen');
+const {width} = Dimensions.get('screen');
 
 const FormLogin = () => {
-  const { login, loading, errorMessage } = useLogin();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    handleLogin,
+    loading,
+    errorMessage,
+  } = useLogin();
 
   const handleGoogleLogin = () => {
     console.log('Google login pressed');
   };
 
   const handleSignUpNavigation = () => {
-  };
-
-  const handleLogin = async () => {
-    await login(email, password);
+    // Logic for sign up navigation
   };
 
   return (
     <View style={styles.formContainer}>
-      {errorMessage && (
-        <Text style={styles.errorText}>{errorMessage}</Text>
-      )}
+      {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
       <View style={styles.inputsContainer}>
         <InputGeneric
           placeholder="Email"
@@ -50,7 +57,12 @@ const FormLogin = () => {
         <View style={styles.divider} />
       </View>
       <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
-        <FontAwesome name="google" size={20} color="#fff" style={styles.googleIcon} />
+        <FontAwesome
+          name="google"
+          size={20}
+          color="#fff"
+          style={styles.googleIcon}
+        />
       </TouchableOpacity>
       <GenericButton
         title={loading ? 'Loading...' : 'Log in'}
@@ -60,9 +72,7 @@ const FormLogin = () => {
         disabled={loading}
       />
       <TouchableOpacity onPress={handleSignUpNavigation}>
-        <Text style={styles.signupText}>
-          Don't have an account? Sign Up
-        </Text>
+        <Text style={styles.signupText}>Don't have an account? Sign Up</Text>
       </TouchableOpacity>
     </View>
   );
@@ -80,7 +90,7 @@ const styles = StyleSheet.create({
     width: width * 0.9,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
+    shadowOffset: {width: 0, height: 5},
     shadowOpacity: 0.3,
     shadowRadius: 10,
     padding: 1,

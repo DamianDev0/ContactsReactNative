@@ -12,4 +12,5 @@ export type MainTabParamList = {
   Home: undefined;
   Form: undefined;
   Map: undefined;
+  LogOut: undefined;
 };

@@ -1,10 +1,13 @@
 import 'react-native-get-random-values';
 import React from 'react';
 import AppNavigation from './src/navigation/appNavigation';
+import { AuthProvider } from './src/context/AuthContext';
 
 const App = () => {
   return (
-   <AppNavigation />
+    <AuthProvider>
+    <AppNavigation />
+  </AuthProvider>
   );
 };
 

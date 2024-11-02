@@ -1,21 +1,23 @@
+// src/navigation/AppNavigation.tsx
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// Screens
+import {useAuth} from '../context/AuthContext';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import OnboardingScreen from '../screens/OnboardingScreen/OnboardingScreen';
 import FormScreen from '../screens/FormScreen/FormScreen';
-import ContactDetailScreen from '../screens/ContactsDetailsScreen/ContactDetailScreen ';
-import {RootStackParamList, MainTabParamList} from '../types/navigation.types';
+import ContactDetailScreen from '../screens/ContactsDetailsScreen/ContactDetailScreen';
 import TabBarIcon from './TabBarIcon';
-import MapScreen from '../screens/MapScreen/MapSreen';
+import MapScreen from '../screens/MapScreen/MapScreen';
 import LoginScreen from '../screens/LoginScreen/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
+import ProtectedRoute from './ProtectedRoute';
+import {ActivityIndicator, View, StyleSheet} from 'react-native';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
-const Tab = createBottomTabNavigator<MainTabParamList>();
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 const MyTabs = () => (
   <Tab.Navigator
@@ -31,9 +33,7 @@ const MyTabs = () => (
         borderTopColor: '#dddddd',
         height: 55,
       },
-      tabBarLabelStyle: {
-        fontSize: 11,
-      },
+      tabBarLabelStyle: {fontSize: 11},
       headerShown: false,
     })}>
     <Tab.Screen name="Home" component={HomeScreen} />
@@ -42,9 +42,10 @@ const MyTabs = () => (
   </Tab.Navigator>
 );
 
-// Main App Navigation Component
 const AppNavigation = () => {
+  const {isAuthenticated} = useAuth();
   const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkFirstLaunch = async () => {
@@ -52,28 +53,37 @@ const AppNavigation = () => {
         'onboardingCompleted',
       );
       setIsFirstLaunch(hasCompletedOnboarding === null);
+      setLoading(false);
     };
-
     checkFirstLaunch();
   }, []);
 
-  if (isFirstLaunch === null) {
-    return null;
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#0000" />
+      </View>
+    );
   }
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={isFirstLaunch ? 'Onboarding' : 'Main'}>
+      <Stack.Navigator
+        initialRouteName={
+          isFirstLaunch ? 'Onboarding' : isAuthenticated ? 'Main' : 'Login'
+        }>
         <Stack.Screen
           name="Onboarding"
           component={OnboardingScreen}
           options={{headerShown: false}}
         />
-        <Stack.Screen
-          name="Main"
-          component={MyTabs}
-          options={{headerShown: false}}
-        />
+        <Stack.Screen name="Main" options={{headerShown: false}}>
+          {() => (
+            <ProtectedRoute>
+              <MyTabs />
+            </ProtectedRoute>
+          )}
+        </Stack.Screen>
         <Stack.Screen
           name="Details"
           component={ContactDetailScreen}
@@ -93,5 +103,14 @@ const AppNavigation = () => {
     </NavigationContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff', // Puedes cambiar el color de fondo según tus preferencias
+  },
+});
 
 export default AppNavigation;

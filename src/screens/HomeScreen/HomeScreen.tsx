@@ -9,6 +9,7 @@ import ContactList from './components/ContactList';
 import NotFound from './components/NotFound';
 import styles from '../../styles/ContactListStyles';
 import { Contact } from '../../interfaces/Contact.interface';
+import LogoutButton from './components/LogoutButton';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
 
@@ -21,13 +22,11 @@ const HomeScreen = () => {
     navigation.navigate('Form');
   };
 
-  const loadContactsCallback = useCallback(() => {
-    loadContacts();
-  }, [loadContacts]);
-
-  useFocusEffect(() => {
-    loadContactsCallback();
-  });
+  useFocusEffect(
+    useCallback(() => {
+      loadContacts();
+    }, [loadContacts])
+  );
 
   const handlePressContact = (contact: Contact) => {
     navigation.navigate('Details', { contact });
@@ -39,6 +38,7 @@ const HomeScreen = () => {
         placeholder="Search a contact"
         onSearch={setSearchTerm}
       />
+      <LogoutButton />
 
       {filteredContacts.length === 0 ? (
         <NotFound onAddContact={handleTouch} />

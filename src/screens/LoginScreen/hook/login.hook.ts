@@ -1,36 +1,37 @@
-import { useState } from 'react';
-import apiService from '../../../services/AuthService';
-import { LoginResponse } from '../../../types/authtypes';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../../context/AuthContext';
 import { useNavigation } from '@react-navigation/native';
-import { Alert } from 'react-native';
 import { RootStackParamList } from '../../../types/navigation.types';
 
 const useLogin = () => {
+  const { login, loading, errorMessage } = useAuth();
   const navigation = useNavigation<RootStackParamList>();
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const login = async (email: string, password: string): Promise<LoginResponse | undefined> => {
-    setLoading(true);
-    setErrorMessage(null);
-    try {
-      const response: LoginResponse = await apiService.login(email, password);
-      if (response) {
-        const token = response.data.accessToken;
-        console.log('Token:', token);
-        Alert.alert('Login successful', 'Welcome back!');
-        navigation.navigate('Main');
-      }
-      return response;
-    } catch (error: any) {
-      setErrorMessage(error.message);
-      return undefined;
-    } finally {
-      setLoading(false);
+  const handleLogin = async () => {
+    if (email && password) {
+      await login(email, password);
+    } else {
+      console.log('Please enter both email and password.');
     }
   };
 
-  return { login, loading, errorMessage };
+  useEffect(() => {
+    if (!loading && !errorMessage) {
+      navigation.navigate('Main');
+    }
+  }, [loading, errorMessage, navigation]);
+
+  return {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    handleLogin,
+    loading,
+    errorMessage,
+  };
 };
 
 export default useLogin;

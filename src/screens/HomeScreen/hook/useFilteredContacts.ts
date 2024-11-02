@@ -22,7 +22,8 @@ export const useFilteredContacts = (searchTerm: string) => {
   }, [searchTerm, contacts]);
   const loadContacts = useCallback(() => {
     loadContactsFromStorage();
-  }, [loadContactsFromStorage]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return { filteredContacts, loadContacts };
 };
