@@ -14,5 +14,9 @@ export interface Contact {
 export interface Contact2 {
   recordID: string;
   displayName: string | null | undefined;
-  phone?: string | null; // Keep it nullable if you want to handle null cases
+  phone?: string | null;
+  email?: string | null;
+  photo?: string | null
+  location?: Location | null;
+  role?: string | null;
 }

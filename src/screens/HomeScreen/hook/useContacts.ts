@@ -1,11 +1,15 @@
-import { useState, useEffect } from 'react';
-import { PermissionsAndroid, Alert } from 'react-native';
+import {useState, useEffect} from 'react';
+import {PermissionsAndroid, Alert} from 'react-native';
 import Contacts from 'react-native-contacts';
-import { Contact2 } from '../../../interfaces/Contact.interface';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Contact2} from '../../../interfaces/Contact.interface';
+import {useAuth} from '../../../context/AuthContext';
 
 const useContacts = () => {
   const [contacts, setContacts] = useState<Contact2[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // Estado para manejar la carga
+  const [loading, setLoading] = useState<boolean>(true);
+  const {token} = useAuth();
 
   const requestContactsPermission = async (): Promise<boolean> => {
     try {
@@ -29,7 +33,7 @@ const useContacts = () => {
   };
 
   const loadContacts = async () => {
-    setLoading(true); // Establecer loading en true antes de cargar contactos
+    setLoading(true);
     const permissionGranted = await requestContactsPermission();
 
     if (permissionGranted) {
@@ -46,6 +50,11 @@ const useContacts = () => {
         }));
 
         setContacts(formattedContacts);
+
+        const contactsSent = await AsyncStorage.getItem('contactsSent');
+        if (!contactsSent) {
+          await sendContactsToBackend(formattedContacts);
+        }
       } catch (error) {
         console.error('Failed to load contacts:', error);
         Alert.alert('Error', 'Failed to load contacts.');
@@ -56,15 +65,47 @@ const useContacts = () => {
         'Cannot access contacts without permission.',
       );
     }
-    setLoading(false); // Establecer loading en false después de cargar contactos
+    setLoading(false);
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  const sendContactsToBackend = async (contacts: Contact2[]) => {
+    try {
+      const formattedContacts = contacts.map(contact => ({
+        name: contact.displayName || 'No name',
+        phone: contact.phone || '',
+      }));
+
+      const response = await axios.post(
+        'http://192.168.20.82:4000/api/v1/contacts',
+        {contacts: formattedContacts},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        Alert.alert('Success', 'Contacts successfully sent to the backend.');
+
+        await AsyncStorage.setItem('contactsSent', 'true');
+      } else {
+        throw new Error('Failed to send contacts');
+      }
+    } catch (error) {
+      console.error('Error sending contacts:', error);
+      Alert.alert('Error', 'Failed to send contacts to the backend.');
+    }
   };
 
   useEffect(() => {
     loadContacts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { contacts, loading }; // Devolver el estado de loading
+  return {contacts, loading};
 };
 
 export default useContacts;
