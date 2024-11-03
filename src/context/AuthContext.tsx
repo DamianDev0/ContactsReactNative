@@ -7,7 +7,7 @@ import React, {
   useEffect,
 } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import apiService from '../services/AuthService'; // Asegúrate de tener un servicio de API configurado
+import apiService from '../services/AuthService';
 import {Alert} from 'react-native';
 
 interface AuthContextProps {
@@ -15,6 +15,7 @@ interface AuthContextProps {
   userId: string | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
   errorMessage: string | null;
@@ -80,6 +81,24 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     }
   };
 
+  const signUp = async (email: string, password: string) => {
+    setLoading(true);
+    setErrorMessage(null);
+
+    try {
+      await apiService.register(email, password);
+      Alert.alert('Registration successful', 'Your account has been created successfully!');
+    } catch (error: any) {
+      console.error('Sign Up error:', error.message);
+      setErrorMessage(error.message);
+      Alert.alert('Registration failed', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
   const logout = async () => {
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('userId');
@@ -98,6 +117,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
         logout,
         loading,
         errorMessage,
+        signUp,
       }}>
       {children}
     </AuthContext.Provider>

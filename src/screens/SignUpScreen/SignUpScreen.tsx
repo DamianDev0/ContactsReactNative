@@ -1,10 +1,11 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+import FormRegister from './components/FormRegister';
 
 const SignUpScreen = () => {
   return (
     <View style={styles.container}>
-      <Text>Sign Up Screen</Text>
+      <FormRegister />
     </View>
   );
 };

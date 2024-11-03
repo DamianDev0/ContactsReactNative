@@ -6,3 +6,12 @@ export interface LoginResponse {
     accessToken: string;
   };
 }
+
+export interface RegisterResponse {
+  code: number;
+  message: string;
+  data: {
+    id: string;
+    email: string;
+  };
+}

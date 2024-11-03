@@ -12,9 +12,14 @@ const useLogin = () => {
   const handleLogin = async () => {
     if (email && password) {
       await login(email, password);
+      console.log('login', email)
     } else {
       console.log('Please enter both email and password.');
     }
+  };
+
+  const handleSignUpNavigation = () => {
+    navigation.navigate('Signup');
   };
 
   useEffect(() => {
@@ -31,6 +36,8 @@ const useLogin = () => {
     handleLogin,
     loading,
     errorMessage,
+    navigation,
+    handleSignUpNavigation,
   };
 };
 

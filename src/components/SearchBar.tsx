@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     margin: 10,
     position: 'relative',
+    marginTop: 40,
   },
   input: {
     flex: 1,

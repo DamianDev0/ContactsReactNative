@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import {StyleSheet, View, Text} from 'react-native';
+import MapView, {Marker, Polyline} from 'react-native-maps';
 import useMapLogic from './hook/MapHook';
 import TransportModePicker from './components/TransportPicker';
+import Loader from '../../components/Loader';
 
 const MapScreen: React.FC = () => {
   const {
@@ -27,7 +28,7 @@ const MapScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <Loader />
       ) : (
         <>
           <MapView
@@ -38,8 +39,7 @@ const MapScreen: React.FC = () => {
               latitudeDelta: 0.09,
               longitudeDelta: 0.04,
             }}
-            onPress={handleMapPress}
-          >
+            onPress={handleMapPress}>
             {origin && (
               <Marker
                 draggable
@@ -63,18 +63,23 @@ const MapScreen: React.FC = () => {
               lineDashPattern={[10, 5]}
             />
           </MapView>
-          <TransportModePicker transportMode={transportMode} setTransportMode={setTransportMode} />
+          <TransportModePicker
+            transportMode={transportMode}
+            setTransportMode={setTransportMode}
+          />
           {currentCoordinates && (
             <View style={styles.coordinatesContainer}>
               <Text style={styles.coordinatesText}>
-                Current Coordinates: {currentCoordinates.latitude.toFixed(6)}, {currentCoordinates.longitude.toFixed(6)}
+                Current Coordinates: {currentCoordinates.latitude.toFixed(6)},{' '}
+                {currentCoordinates.longitude.toFixed(6)}
               </Text>
             </View>
           )}
           {distanceInfo && (
             <View style={styles.distanceContainer}>
               <Text style={styles.distanceText}>
-                Distance: {(distanceInfo.distance / 1000).toFixed(2)} km, Time: {Math.floor(distanceInfo.duration / 60)} min
+                Distance: {(distanceInfo.distance / 1000).toFixed(2)} km, Time:{' '}
+                {Math.floor(distanceInfo.duration / 60)} min
               </Text>
             </View>
           )}
@@ -89,6 +94,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'flex-end',
     alignItems: 'center',
+    backgroundColor: '#fff',
   },
   map: {
     ...StyleSheet.absoluteFillObject,

@@ -1,52 +1,45 @@
-import React, { useState, useCallback } from 'react';
-import { View } from 'react-native';
-import { useFilteredContacts } from './hook/useFilteredContacts';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../types/navigation.types';
-import SearchBar from '../../components/InputSearch';
-import ContactList from './components/ContactList';
+import React from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 import NotFound from './components/NotFound';
-import styles from '../../styles/ContactListStyles';
-import { Contact } from '../../interfaces/Contact.interface';
+import ContactList from './components/ContactList';
 import LogoutButton from './components/LogoutButton';
-
-type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
+import SearchBar from '../../components/SearchBar';
+import useFilteredContacts from './hook/useFilteredContacts ';
+import Loader from '../../components/Loader';
+import useContacts from './hook/useContacts';
 
 const HomeScreen = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const { filteredContacts, loadContacts } = useFilteredContacts(searchTerm);
-  const navigation = useNavigation<HomeScreenNavigationProp>();
-
-  const handleTouch = () => {
-    navigation.navigate('Form');
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      loadContacts();
-    }, [loadContacts])
-  );
-
-  const handlePressContact = (contact: Contact) => {
-    navigation.navigate('Details', { contact });
-  };
+  const {filteredContacts, setSearchTerm} = useFilteredContacts();
+  const {loading} = useContacts();
 
   return (
     <View style={styles.container}>
-      <SearchBar
-        placeholder="Search a contact"
-        onSearch={setSearchTerm}
-      />
       <LogoutButton />
-
-      {filteredContacts.length === 0 ? (
-        <NotFound onAddContact={handleTouch} />
+      <SearchBar placeholder="Search Contacts" onSearch={setSearchTerm} />
+      <Text style={styles.header}>Contacts</Text>
+      {loading ? (
+        <Loader />
+      ) : filteredContacts.length === 0 ? (
+        <NotFound />
       ) : (
-        <ContactList contacts={filteredContacts} onPressContact={handlePressContact} />
+        <ContactList contacts={filteredContacts} />
       )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+});
 
 export default HomeScreen;
