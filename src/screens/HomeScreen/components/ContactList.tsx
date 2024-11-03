@@ -1,59 +1,86 @@
 import React from 'react';
-import {SectionList, View, Text, TouchableOpacity, Image} from 'react-native';
-import styles from '../../../styles/ContactListStyles';
-import {Contact} from '../../../interfaces/Contact.interface';
+import { View, Text, SectionList, StyleSheet, TouchableOpacity } from 'react-native';
+import { Contact2 } from '../../../interfaces/Contact.interface';
 
 interface ContactListProps {
-  contacts: Contact[];
-  onPressContact: (contact: Contact) => void;
+  contacts: Contact2[];
+  onPressContact?: (contact: Contact2) => void;
 }
 
-const ContactList: React.FC<ContactListProps> = ({
-  contacts,
-  onPressContact,
-}) => {
-  const sortedContacts = contacts.sort((nameA, nameB) => nameA.name.localeCompare(nameB.name));
+const ContactList: React.FC<ContactListProps> = ({ contacts, onPressContact }) => {
+  if (!contacts || contacts.length === 0) {
+    return (
+      <View style={styles.noContactsContainer}>
+        <Text>Contacts not found.</Text>
+      </View>
+    );
+  }
 
-  const groupedContacts = sortedContacts.reduce((acc, contact) => {
-    const firstLetter = contact.name[0].toUpperCase();
+  const groupedContacts = contacts.reduce((acc, contact) => {
+    const firstLetter = contact.displayName?.[0].toUpperCase() || '#';
     if (!acc[firstLetter]) {
       acc[firstLetter] = [];
     }
     acc[firstLetter].push(contact);
     return acc;
-  }, {} as Record<string, Contact[]>);
+  }, {} as Record<string, Contact2[]>);
 
-  const sections = Object.keys(groupedContacts)
-    .sort()
-    .map(letter => ({
-      title: letter,
-      data: groupedContacts[letter],
-    }));
+  const sections = Object.keys(groupedContacts).map(key => ({
+    title: key,
+    data: groupedContacts[key],
+  }));
+
+  const renderItem = ({ item }: { item: Contact2 }) => (
+    <TouchableOpacity onPress={() => onPressContact && onPressContact(item)}>
+      <View style={styles.contactContainer}>
+        <Text style={styles.contactName}>{item.displayName || 'No name'}</Text>
+        {item.phone && <Text style={styles.contactPhone}>{item.phone}</Text>}
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <SectionList
       sections={sections}
-      keyExtractor={item => item.phone}
-      renderItem={({item}) => (
-        <TouchableOpacity onPress={() => onPressContact(item)}>
-          <View style={styles.contactItem}>
-            {item.photo && (
-              <Image source={{uri: item.photo}} style={styles.contactPhoto} />
-            )}
-            <View style={styles.contactDetails}>
-              <Text style={styles.contactText}>{item.name}</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
+      keyExtractor={item => item.recordID}
+      renderItem={renderItem}
+      renderSectionHeader={({ section: { title } }) => (
+        <Text style={styles.sectionHeader}>{title}</Text>
       )}
-      renderSectionHeader={({section: {title}}) => (
-        <View style={styles.sectionHeader}>
-          <Text style={styles.headerText}>{title}</Text>
-        </View>
-      )}
-      style={styles.sectionList}
+      stickySectionHeadersEnabled={false}
     />
   );
 };
+
+const styles = StyleSheet.create({
+  noContactsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sectionHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    backgroundColor: '#f4f4f4',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  contactContainer: {
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  contactName: {
+    fontSize: 18,
+  },
+  contactPhone: {
+    fontSize: 16,
+    color: '#555',
+  },
+  contactEmail: {
+    fontSize: 16,
+    color: '#555',
+  },
+});
 
 export default ContactList;

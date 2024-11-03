@@ -12,9 +12,9 @@ import ContactDetailScreen from '../screens/ContactsDetailsScreen/ContactDetailS
 import TabBarIcon from './TabBarIcon';
 import MapScreen from '../screens/MapScreen/MapScreen';
 import LoginScreen from '../screens/LoginScreen/LoginScreen';
-import SignUpScreen from '../screens/SignUpScreen';
+import SignUpScreen from '../screens/SignUpScreen/SignUpScreen';
 import ProtectedRoute from './ProtectedRoute';
-import {ActivityIndicator, View, StyleSheet} from 'react-native';
+import Loader from '../components/Loader';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -60,9 +60,7 @@ const AppNavigation = () => {
 
   if (loading) {
     return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#0000" />
-      </View>
+       <Loader />
     );
   }
 
@@ -104,13 +102,5 @@ const AppNavigation = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff', // Puedes cambiar el color de fondo según tus preferencias
-  },
-});
 
 export default AppNavigation;

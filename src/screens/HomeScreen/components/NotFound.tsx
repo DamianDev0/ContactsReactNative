@@ -4,7 +4,7 @@ import { Image, Text, View, StyleSheet } from 'react-native';
 import GenericButton from '../../../components/GenericButton';
 
 interface NotFoundProps {
-  onAddContact: () => void;
+  onAddContact?: () => void;
 }
 
 const NotFound: React.FC<NotFoundProps> = ({ onAddContact }) => {
