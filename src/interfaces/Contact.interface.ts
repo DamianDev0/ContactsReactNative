@@ -14,6 +14,7 @@ export interface Contact {
 export interface Contact2 {
   recordID: string;
   displayName: string | null | undefined;
+  name?: string | null;
   phone?: string | null;
   email?: string | null;
   photo?: string | null
