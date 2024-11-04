@@ -72,12 +72,13 @@ const useContacts = () => {
   const sendContactsToBackend = async (contacts: Contact2[]) => {
     try {
       const formattedContacts = contacts.map(contact => ({
+        recordID: contact.recordID,
         name: contact.displayName || 'No name',
         phone: contact.phone || '',
       }));
 
       const response = await axios.post(
-        'http://192.168.20.82:4000/api/v1/contacts',
+        'http://192.168.1.2:4000/api/v1/contacts',
         {contacts: formattedContacts},
         {
           headers: {
