@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {Contact2} from '../interfaces/Contact.interface';
 
-const API_URL = 'http://192.168.1.2:4000/api/v1/contacts';
+const API_URL = 'http://192.168.89.176:4000/api/v1/contacts';
 
 export interface ApiResponse {
   code: number;
@@ -32,14 +32,17 @@ export const getContactById = async (
 };
 
 // GET: Obtener todos los contactos
-export const getAllContacts = async (token: string) => {
+export const getAllContacts = async (token: string): Promise<Contact2[]> => {
   try {
-    const response = await axios.get('http://192.168.1.2:4000/api/v1/contacts', {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await axios.get(
+      'http://192.168.89.176:4000/api/v1/contacts',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
-    return response.data; // Asegúrate de que response.data sea un array
+    );
+    return response.data.data;
   } catch (error) {
     console.error('Error in getAllContacts:', error);
     throw error;

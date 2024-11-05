@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, Image, Button} from 'react-native';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {RootStackParamList} from '../../types/navigation.types';
 import {useContactDetails} from './hook/ContactDetailsHook';
+import useContacts from '../HomeScreen/hook/useContacts'; // Import useContacts
 import Loader from '../../components/Loader';
 import EditModal from './components/EditModal';
 
@@ -11,6 +12,9 @@ type DetailsScreenRouteProp = RouteProp<RootStackParamList, 'Details'>;
 const DetailsScreen: React.FC = () => {
   const route = useRoute<DetailsScreenRouteProp>();
   const {contact} = route.params;
+  const navigation = useNavigation();
+
+  const {refreshContacts} = useContacts(); // Get refreshContacts from the hook
 
   const {contactData, loading, updateContact, deleteContact} =
     useContactDetails(contact.recordID, contact);
@@ -26,11 +30,14 @@ const DetailsScreen: React.FC = () => {
     email: string;
   }) => {
     await updateContact(updatedContact);
+    await refreshContacts(); // Refresh contacts after updating
     closeModal();
   };
 
   const handleDeleteContact = async () => {
     await deleteContact();
+    await refreshContacts(); // Refresh contacts after deletion
+    navigation.goBack(); // Go back after deletion
   };
 
   if (loading) {
@@ -69,9 +76,9 @@ const DetailsScreen: React.FC = () => {
         visible={isModalVisible}
         onClose={closeModal}
         onSave={handleSaveContact}
-        contactName={contactData.name || ''} // Use empty string as fallback
-        contactPhone={contactData.phone || ''} // Use empty string as fallback
-        contactEmail={contactData.email || ''} // Use empty string as fallback
+        contactName={contactData.name || ''}
+        contactPhone={contactData.phone || ''}
+        contactEmail={contactData.email || ''}
       />
     </View>
   );

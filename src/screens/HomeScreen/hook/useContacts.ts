@@ -1,15 +1,20 @@
-import {useState, useEffect} from 'react';
-import {PermissionsAndroid, Alert} from 'react-native';
+// hook/useContacts.ts
+import { useState, useEffect } from 'react';
+import { PermissionsAndroid, Alert } from 'react-native';
 import Contacts from 'react-native-contacts';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Contact2} from '../../../interfaces/Contact.interface';
-import {useAuth} from '../../../context/AuthContext';
+import { Contact2 } from '../../../interfaces/Contact.interface';
+import { useAuth } from '../../../context/AuthContext';
+import { getAllContacts } from '../../../services/ContactsManager';
+
+
+
 
 const useContacts = () => {
   const [contacts, setContacts] = useState<Contact2[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const {token} = useAuth();
+  const { token } = useAuth();
 
   const requestContactsPermission = async (): Promise<boolean> => {
     try {
@@ -38,23 +43,21 @@ const useContacts = () => {
 
     if (permissionGranted) {
       try {
-        const contactsList = await Contacts.getAll();
-
-        const formattedContacts = contactsList.map(contact => ({
-          recordID: contact.recordID,
-          displayName: contact.displayName || 'No name',
-          phone:
-            contact.phoneNumbers.length > 0
-              ? contact.phoneNumbers[0].number
-              : null,
-        }));
-
-        setContacts(formattedContacts);
-
         const contactsSent = await AsyncStorage.getItem('contactsSent');
+
         if (!contactsSent) {
+          const contactsList = await Contacts.getAll();
+
+          const formattedContacts = contactsList.map(contact => ({
+            recordID: contact.recordID,
+            displayName: contact.displayName || 'No name',
+            phone: contact.phoneNumbers.length > 0 ? contact.phoneNumbers[0].number : null,
+          }));
+
           await sendContactsToBackend(formattedContacts);
         }
+        const apiContacts = await getAllContacts(token ?? '');
+        setContacts(apiContacts);
       } catch (error) {
         console.error('Failed to load contacts:', error);
         Alert.alert('Error', 'Failed to load contacts.');
@@ -78,8 +81,8 @@ const useContacts = () => {
       }));
 
       const response = await axios.post(
-        'http://192.168.1.2:4000/api/v1/contacts',
-        {contacts: formattedContacts},
+        'http://192.168.89.176:4000/api/v1/contacts',
+        { contacts: formattedContacts },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -90,7 +93,6 @@ const useContacts = () => {
 
       if (response.status === 200 || response.status === 201) {
         Alert.alert('Success', 'Contacts successfully sent to the backend.');
-
         await AsyncStorage.setItem('contactsSent', 'true');
       } else {
         throw new Error('Failed to send contacts');
@@ -101,12 +103,24 @@ const useContacts = () => {
     }
   };
 
+  const refreshContacts = async () => {
+    setLoading(true);
+    try {
+      const apiContacts = await getAllContacts(token ?? '');
+      setContacts(apiContacts);
+    } catch (error) {
+      console.error('Failed to refresh contacts:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadContacts();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return {contacts, loading};
+  return { contacts, loading, setContacts, refreshContacts };
 };
 
 export default useContacts;
