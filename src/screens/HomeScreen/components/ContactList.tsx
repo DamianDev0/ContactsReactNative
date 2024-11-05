@@ -1,85 +1,98 @@
-import React from 'react';
-import { View, Text, SectionList, StyleSheet, TouchableOpacity } from 'react-native';
+// components/ContactList.tsx
+import React, { useMemo } from 'react';
+import {
+  View,
+  Text,
+  SectionList,
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Contact2 } from '../../../interfaces/Contact.interface';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../../types/navigation.types';
 
 interface ContactListProps {
   contacts: Contact2[];
-  onPressContact?: (contact: Contact2) => void;
+  loading: boolean;
 }
 
-const ContactList: React.FC<ContactListProps> = ({ contacts, onPressContact }) => {
-  if (!contacts || contacts.length === 0) {
-    return (
-      <View style={styles.noContactsContainer}>
-        <Text>Contacts not found.</Text>
-      </View>
-    );
-  }
+type NavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
 
-  const groupedContacts = contacts.reduce((acc, contact) => {
-    const firstLetter = contact.displayName?.[0].toUpperCase() || '#';
-    if (!acc[firstLetter]) {
-      acc[firstLetter] = [];
-    }
-    acc[firstLetter].push(contact);
-    return acc;
-  }, {} as Record<string, Contact2[]>);
+const ContactList: React.FC<ContactListProps> = ({ contacts, loading }) => {
+  const navigation = useNavigation<NavigationProp>();
 
-  const sections = Object.keys(groupedContacts).map(key => ({
-    title: key,
-    data: groupedContacts[key],
-  }));
+  const sections = useMemo(() => [
+    {
+      title: 'Contacts',
+      data: contacts,
+    },
+  ], [contacts]);
+
+  const handleContactPress = (contact: Contact2) => {
+    navigation.navigate('Details', { contact });
+  };
 
   const renderItem = ({ item }: { item: Contact2 }) => (
-    <TouchableOpacity onPress={() => onPressContact && onPressContact(item)}>
-      <View style={styles.contactContainer}>
-        <Text style={styles.contactName}>{item.displayName || 'No name'}</Text>
-        {item.phone && <Text style={styles.contactPhone}>{item.phone}</Text>}
-      </View>
+    <TouchableOpacity onPress={() => handleContactPress(item)} style={styles.contactItem}>
+      <Text style={styles.contactName}>{item.name}</Text>
+      <Text style={styles.contactPhone}>{item.phone}</Text>
     </TouchableOpacity>
   );
 
+  const renderEmptyComponent = () => (
+    <Text style={styles.emptyMessage}>No contacts available.</Text>
+  );
+
+  const renderSectionHeader = ({ section: { title } }: { section: { title: string } }) => (
+    <Text style={styles.sectionHeader}>{title}</Text>
+  );
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
   return (
-    <SectionList
-      sections={sections}
-      keyExtractor={item => item.recordID}
-      renderItem={renderItem}
-      renderSectionHeader={({ section: { title } }) => (
-        <Text style={styles.sectionHeader}>{title}</Text>
-      )}
-      stickySectionHeadersEnabled={false}
-    />
+    <View style={styles.container}>
+      <SectionList
+        sections={sections}
+        keyExtractor={(item) => item.recordID.toString()}
+        renderItem={renderItem}
+        ListEmptyComponent={renderEmptyComponent}
+        renderSectionHeader={renderSectionHeader}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  noContactsContainer: {
+  container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 16,
+  },
+  contactItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+  },
+  contactName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  contactPhone: {
+    fontSize: 16,
+    color: '#666',
+  },
+  emptyMessage: {
+    textAlign: 'center',
+    marginTop: 20,
   },
   sectionHeader: {
     fontSize: 20,
     fontWeight: 'bold',
     backgroundColor: '#f4f4f4',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-  },
-  contactContainer: {
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  contactName: {
-    fontSize: 18,
-  },
-  contactPhone: {
-    fontSize: 16,
-    color: '#555',
-  },
-  contactEmail: {
-    fontSize: 16,
-    color: '#555',
+    padding: 5,
   },
 });
 
