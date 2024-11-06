@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {LoginResponse, RegisterResponse} from '../types/authtypes';
 
-const API_URL = 'http://192.168.89.176:4000/api/v1/auth';
+const API_URL = 'http://192.168.1.2:4000/api/v1/auth';
 
 const apiService = {
   login: async (email: string, password: string): Promise<LoginResponse> => {
