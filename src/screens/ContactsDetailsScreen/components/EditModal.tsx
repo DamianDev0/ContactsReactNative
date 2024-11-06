@@ -1,19 +1,10 @@
 import React, {useState} from 'react';
 import {View, Modal, Text, StyleSheet, TextInput} from 'react-native';
+import MapView, {Marker, MapPressEvent} from 'react-native-maps';
 import GenericButton from '../../../components/GenericButton';
+import { EditModalProps } from '../../../interfaces/EditModal.interface';
 
-interface EditModalProps {
-  visible: boolean;
-  onClose: () => void;
-  onSave: (updatedContact: {
-    name: string;
-    phone: string;
-    email: string;
-  }) => void;
-  contactName: string;
-  contactPhone: string;
-  contactEmail: string;
-}
+
 
 const EditModal: React.FC<EditModalProps> = ({
   visible,
@@ -22,14 +13,25 @@ const EditModal: React.FC<EditModalProps> = ({
   contactName,
   contactPhone,
   contactEmail,
+  contactLatitude,
+  contactLongitude,
 }) => {
   const [name, setName] = useState(contactName);
   const [phone, setPhone] = useState(contactPhone);
   const [email, setEmail] = useState(contactEmail);
+  const [latitude, setLatitude] = useState(contactLatitude);
+  const [longitude, setLongitude] = useState(contactLongitude);
 
   const handleSave = () => {
-    onSave({name, phone, email});
+    onSave({name, phone, email, latitude, longitude});
     onClose();
+  };
+
+  const handleMapPress = (event: MapPressEvent) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const {latitude, longitude} = event.nativeEvent.coordinate;
+    setLatitude(latitude);
+    setLongitude(longitude);
   };
 
   return (
@@ -62,6 +64,18 @@ const EditModal: React.FC<EditModalProps> = ({
             onChangeText={setEmail}
             keyboardType="email-address"
           />
+
+          <MapView
+            style={styles.map}
+            initialRegion={{
+              latitude: latitude || 37.78825,
+              longitude: longitude || -122.4324,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+            onPress={handleMapPress}>
+            <Marker coordinate={{latitude, longitude}} />
+          </MapView>
 
           <View style={styles.modalButtons}>
             <GenericButton
@@ -114,6 +128,12 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
     color: '#333',
+  },
+  map: {
+    width: '100%',
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 20,
   },
   modalButtons: {
     flexDirection: 'row',

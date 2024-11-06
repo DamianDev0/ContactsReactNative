@@ -81,11 +81,11 @@ const useContacts = () => {
       }));
 
       const response = await axios.post(
-        'http://192.168.89.176:4000/api/v1/contacts',
+        'http://192.168.1.2:4000/api/v1/contacts',
         { contacts: formattedContacts },
         {
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type':  'application/json',
             Authorization: `Bearer ${token}`,
           },
         },
