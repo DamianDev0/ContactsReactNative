@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { AuthProvider } from './src/context/AuthContext';
 import AppNavigation from './src/navigation/appNavigation';
 import Loader from './src/components/Loader';
+import Toast from 'react-native-toast-message';
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -16,6 +17,7 @@ const App = () => {
   return loading ? <Loader /> : (
     <AuthProvider>
       <AppNavigation />
+      <Toast />
     </AuthProvider>
   );
 };

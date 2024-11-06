@@ -26,7 +26,7 @@ const MyTabs = () => (
       tabBarIcon: ({color, size}) => (
         <TabBarIcon routeName={route.name} color={color} size={size} />
       ),
-      tabBarActiveTintColor: '#85c1e9',
+      tabBarActiveTintColor: '#f0b27a',
       tabBarInactiveTintColor: '#000',
       tabBarStyle: {
         backgroundColor: '#f9f9f9',
