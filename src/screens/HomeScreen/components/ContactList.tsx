@@ -1,53 +1,61 @@
-// components/ContactList.tsx
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 import {
   View,
   Text,
   SectionList,
   ActivityIndicator,
   StyleSheet,
-  TouchableOpacity,
+  Dimensions,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Contact2 } from '../../../interfaces/Contact.interface';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../../types/navigation.types';
+import {useNavigation} from '@react-navigation/native';
+import {Contact2} from '../../../interfaces/Contact.interface';
+import {StackNavigationProp} from '@react-navigation/stack';
+import CardContact from './CardContact';
+import {RootStackParamList} from '../../../types/navigation.types';
 
 interface ContactListProps {
   contacts: Contact2[];
   loading: boolean;
 }
 
+const {width} = Dimensions.get('screen');
+
 type NavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
 
-const ContactList: React.FC<ContactListProps> = ({ contacts, loading }) => {
+const ContactList: React.FC<ContactListProps> = ({contacts, loading}) => {
   const navigation = useNavigation<NavigationProp>();
 
-  const sections = useMemo(() => [
-    {
-      title: 'Contacts',
-      data: contacts,
-    },
-  ], [contacts]);
+  const sections = useMemo(() => {
+    const groupedContacts = contacts.reduce((acc, contact) => {
+      const firstLetter = contact.name?.charAt(0).toUpperCase() || '#';
+      if (!acc[firstLetter]) {
+        acc[firstLetter] = [];
+      }
+      acc[firstLetter].push(contact);
+      return acc;
+    }, {} as Record<string, Contact2[]>);
+
+    return Object.keys(groupedContacts)
+      .sort()
+      .map(letter => ({
+        title: letter,
+        data: groupedContacts[letter],
+      }));
+  }, [contacts]);
 
   const handleContactPress = (contact: Contact2) => {
-    navigation.navigate('Details', { contact });
+    navigation.navigate('Details', {contact});
   };
 
-  const renderItem = ({ item }: { item: Contact2 }) => (
-    <TouchableOpacity onPress={() => handleContactPress(item)} style={styles.contactItem}>
-      <Text style={styles.contactName}>{item.name}</Text>
-      <Text style={styles.contactPhone}>{item.phone}</Text>
-    </TouchableOpacity>
+  const renderItem = ({item}: {item: Contact2}) => (
+    <CardContact item={item} onPress={handleContactPress} />
   );
 
-  const renderEmptyComponent = () => (
-    <Text style={styles.emptyMessage}>No contacts available.</Text>
-  );
-
-  const renderSectionHeader = ({ section: { title } }: { section: { title: string } }) => (
-    <Text style={styles.sectionHeader}>{title}</Text>
-  );
+  const renderSectionHeader = ({
+    section: {title},
+  }: {
+    section: {title: string};
+  }) => <Text style={styles.sectionHeader}>{title}</Text>;
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -57,9 +65,8 @@ const ContactList: React.FC<ContactListProps> = ({ contacts, loading }) => {
     <View style={styles.container}>
       <SectionList
         sections={sections}
-        keyExtractor={(item) => item.recordID.toString()}
+        keyExtractor={item => item.recordID.toString()}
         renderItem={renderItem}
-        ListEmptyComponent={renderEmptyComponent}
         renderSectionHeader={renderSectionHeader}
       />
     </View>
@@ -69,30 +76,17 @@ const ContactList: React.FC<ContactListProps> = ({ contacts, loading }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-  },
-  contactItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-  },
-  contactName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  contactPhone: {
-    fontSize: 16,
-    color: '#666',
-  },
-  emptyMessage: {
-    textAlign: 'center',
-    marginTop: 20,
+    paddingTop: 20,
+    width: width * 0.9,
   },
   sectionHeader: {
     fontSize: 20,
     fontWeight: 'bold',
-    backgroundColor: '#f4f4f4',
-    padding: 5,
+    backgroundColor: '#0000',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginVertical: 5,
+    borderRadius: 4,
   },
 });
 
