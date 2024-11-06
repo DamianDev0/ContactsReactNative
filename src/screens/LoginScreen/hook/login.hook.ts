@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../../context/AuthContext';
-import { useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '../../../types/navigation.types';
+import {useState, useEffect} from 'react';
+import {useAuth} from '../../../context/AuthContext';
+import {useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../../../types/navigation.types';
 
 const useLogin = () => {
-  const { login, loading, errorMessage } = useAuth();
+  const {login, loading, errorMessage} = useAuth();
   const navigation = useNavigation<RootStackParamList>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -12,9 +12,7 @@ const useLogin = () => {
   const handleLogin = async () => {
     if (email && password) {
       await login(email, password);
-      console.log('login', email)
-    } else {
-      console.log('Please enter both email and password.');
+      return;
     }
   };
 

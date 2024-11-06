@@ -37,11 +37,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   header: {
-    fontSize: 25,
+    fontSize: 23,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    color: '#f0b27a',
+    color: '#000',
+    backgroundColor: 'rgba(240, 178, 122, 0.7)',
+    padding: 10,
+    borderRadius: 10,
   },
 });
 

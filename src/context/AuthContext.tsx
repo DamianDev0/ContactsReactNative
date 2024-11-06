@@ -1,14 +1,7 @@
-// src/context/AuthContext.tsx
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect,
-} from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiService from '../services/AuthService';
-import {Alert} from 'react-native';
+import CustomToast from '../components/CustomToast';
 
 interface AuthContextProps {
   token: string | null;
@@ -19,86 +12,105 @@ interface AuthContextProps {
   logout: () => Promise<void>;
   loading: boolean;
   errorMessage: string | null;
+  successMessage: string | null;
 }
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthContext = createContext<AuthContextProps | undefined>(
-  undefined,
-);
+export const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-export const AuthProvider = ({children}: AuthProviderProps) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  // Effect to load the token and check authentication status on initial load
   useEffect(() => {
-    const loadToken = async () => {
-      const storedToken = await AsyncStorage.getItem('token');
-      const storedUserId = await AsyncStorage.getItem('userId');
-
-      console.log('token stored', storedToken);
-      console.log('userId stored', storedUserId);
-
-      if (storedToken && storedUserId) {
-        setToken(storedToken);
-        setUserId(storedUserId);
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-      }
-    };
-    loadToken();
+    loadStoredToken();
   }, []);
 
+  // Function to load the token from AsyncStorage
+  const loadStoredToken = async () => {
+    const storedToken = await AsyncStorage.getItem('token');
+    const storedUserId = await AsyncStorage.getItem('userId');
+    
+    if (storedToken && storedUserId) {
+      setToken(storedToken);
+      setUserId(storedUserId);
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
+  };
+
+  // Function to handle login
   const login = async (email: string, password: string) => {
     setLoading(true);
-    setErrorMessage(null);
+    resetMessages();
 
     try {
-      const {data} = await apiService.login(email, password);
-      const accessToken = data.accessToken;
-
-      if (accessToken) {
-        await AsyncStorage.setItem('token', accessToken);
-        await AsyncStorage.setItem('userId', data.id);
-        setToken(accessToken);
-        setUserId(data.id);
-        setIsAuthenticated(true);
-        Alert.alert('Login successful', 'Welcome back!');
-      } else {
-        throw new Error('Token not found in response');
-      }
+      const { data } = await apiService.login(email, password);
+      handleLoginSuccess(data);
     } catch (error: any) {
-      console.error('Login error:', error.message);
-      setErrorMessage(error.message);
+      handleError(error.message);
     } finally {
       setLoading(false);
     }
   };
 
+  // Function to handle successful login
+  const handleLoginSuccess = (data: any) => {
+    const { accessToken, id } = data;
+    if (accessToken) {
+      storeToken(accessToken, id);
+      setSuccessMessage('Login successful! Welcome back!');
+    } else {
+      throw new Error('Token not found in response');
+    }
+  };
+
+  // Function to store the token in AsyncStorage
+  const storeToken = async (token: string, userId: string) => {
+    await AsyncStorage.setItem('token', token);
+    await AsyncStorage.setItem('userId', userId);
+    setToken(token);
+    setUserId(userId);
+    setIsAuthenticated(true);
+  };
+
+  // Function to handle sign up
   const signUp = async (email: string, password: string) => {
     setLoading(true);
-    setErrorMessage(null);
+    resetMessages();
 
     try {
       await apiService.register(email, password);
-      Alert.alert('Registration successful', 'Your account has been created successfully!');
+      setSuccessMessage('Registration successful! Your account has been created.');
     } catch (error: any) {
-      console.error('Sign Up error:', error.message);
-      setErrorMessage(error.message);
-      Alert.alert('Registration failed', error.message);
+      handleError(error.message);
     } finally {
       setLoading(false);
     }
   };
 
+  // Function to handle errors
+  const handleError = (message: string) => {
+    console.error(message);
+    setErrorMessage('An error occurred. Please try again!');
+  };
 
+  // Function to reset success and error messages
+  const resetMessages = () => {
+    setErrorMessage(null);
+    setSuccessMessage(null);
+  };
 
+  // Function to handle logout
   const logout = async () => {
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('userId');
@@ -117,13 +129,18 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
         logout,
         loading,
         errorMessage,
+        successMessage,
         signUp,
-      }}>
+      }}
+    >
       {children}
+      {errorMessage && <CustomToast type="error" text1="Error" text2={errorMessage} />}
+      {successMessage && <CustomToast type="success" text1="Success" text2={successMessage} />}
     </AuthContext.Provider>
   );
 };
 
+// Custom hook to use the AuthContext
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
