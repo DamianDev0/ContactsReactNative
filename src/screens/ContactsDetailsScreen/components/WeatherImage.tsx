@@ -9,7 +9,7 @@ interface WeatherImageProps {
 
 const WeatherImage: React.FC<WeatherImageProps> = ({weather}) => {
   const getWeatherImage = () => {
-    if (!weather) return null;
+    if (!weather) {return null;}
 
     const condition = weather.weather[0].main;
 
@@ -42,7 +42,7 @@ const WeatherImage: React.FC<WeatherImageProps> = ({weather}) => {
 
 const styles = StyleSheet.create({
   weatherImage: {
-    width: 100,
+    width: 150,
     height: 100,
     marginBottom: 20,
   },

@@ -31,7 +31,6 @@ export const getContactById = async (
   }
 };
 
-// GET: Obtener todos los contactos
 export const getAllContacts = async (token: string): Promise<Contact2[]> => {
   try {
     const response = await axios.get(
@@ -48,7 +47,7 @@ export const getAllContacts = async (token: string): Promise<Contact2[]> => {
     throw error;
   }
 };
-// PATCH: Actualizar contacto por ID
+
 export const updateContactById = async (
   recordID: string,
   updateContactData: Partial<Contact2>,
@@ -74,8 +73,6 @@ export const updateContactById = async (
     throw error;
   }
 };
-
-// DELETE: Eliminar contacto por ID
 export const deleteContactById = async (
   recordID: string,
   token: string,
@@ -84,7 +81,7 @@ export const deleteContactById = async (
     throw new Error('No token found, user is not authenticated.');
   }
 
-  console.log(`Attempting to delete contact with ID: ${recordID}`); // Log the ID
+  console.log(`Attempting to delete contact with ID: ${recordID}`);
   try {
     await axios.delete(`${API_URL}/${recordID}`, {
       headers: {

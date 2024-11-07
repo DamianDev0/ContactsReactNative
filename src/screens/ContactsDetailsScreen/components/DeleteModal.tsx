@@ -23,14 +23,14 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
 }) => {
   return (
     <Modal
-      animationType="fade"
+      animationType="slide"
       transparent={true}
       visible={visible}
       onRequestClose={onClose}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Image
-            source={require('../../../assets/img/Shattered.png')}
+            source={require('../../../assets/img/delete.png')}
             style={styles.modalImage}
           />
           <Text style={styles.modalText}>
@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalImage: {
-    width: 420,
-    height: 300,
+    width: 450,
+    height: 350,
     resizeMode: 'contain',
     marginBottom: 20,
   },
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     textAlign: 'center',
     color: '#333',
-    fontWeight: 'semibold',
+    fontWeight: '600',
   },
   modalButtons: {
     flexDirection: 'row',

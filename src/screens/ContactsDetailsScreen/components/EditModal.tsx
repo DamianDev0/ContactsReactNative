@@ -2,9 +2,8 @@ import React, {useState} from 'react';
 import {View, Modal, Text, StyleSheet, TextInput} from 'react-native';
 import MapView, {Marker, MapPressEvent} from 'react-native-maps';
 import GenericButton from '../../../components/GenericButton';
-import { EditModalProps } from '../../../interfaces/EditModal.interface';
-
-
+import {EditModalProps} from '../../../interfaces/EditModal.interface';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const EditModal: React.FC<EditModalProps> = ({
   visible,
@@ -44,38 +43,51 @@ const EditModal: React.FC<EditModalProps> = ({
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Edit Contact</Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Name"
-            value={name}
-            onChangeText={setName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Phone"
-            value={phone}
-            onChangeText={setPhone}
-            keyboardType="phone-pad"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
+          <View style={styles.inputContainer}>
+            <Icon name="user" size={20} color="#333" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Name"
+              value={name}
+              onChangeText={setName}
+            />
+          </View>
 
-          <MapView
-            style={styles.map}
-            initialRegion={{
-              latitude: latitude || 37.78825,
-              longitude: longitude || -122.4324,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
-            onPress={handleMapPress}>
-            <Marker coordinate={{latitude, longitude}} />
-          </MapView>
+          <View style={styles.inputContainer}>
+            <Icon name="phone" size={20} color="#333" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Phone"
+              value={phone}
+              onChangeText={setPhone}
+              keyboardType="phone-pad"
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Icon name="envelope" size={20} color="#333" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+          </View>
+
+          <View style={styles.mapContainer}>
+            <MapView
+              style={styles.map}
+              initialRegion={{
+                latitude: latitude || 6.242165,
+                longitude: longitude || -75.572195,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}
+              onPress={handleMapPress}>
+              <Marker coordinate={{latitude, longitude}} />
+            </MapView>
+          </View>
 
           <View style={styles.modalButtons}>
             <GenericButton
@@ -108,7 +120,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   modalContent: {
-    width: 350,
+    width: 360,
     backgroundColor: '#fff',
     borderRadius: 20,
     padding: 30,
@@ -120,20 +132,35 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: '#000',
   },
-  input: {
-    width: '100%',
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderColor: '#ddd',
     paddingVertical: 8,
     marginBottom: 15,
+    width: '100%',
+  },
+  icon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
     fontSize: 16,
     color: '#333',
   },
+  mapContainer: {
+    width: '100%',
+    height: 260,
+    borderRadius: 20,
+    overflow: 'hidden',
+    marginBottom: 20,
+    borderColor: '#000',
+    borderWidth: 1,
+  },
   map: {
     width: '100%',
-    height: 200,
-    borderRadius: 10,
-    marginBottom: 20,
+    height: '100%',
   },
   modalButtons: {
     flexDirection: 'row',

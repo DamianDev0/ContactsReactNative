@@ -38,9 +38,10 @@ const useEditContact = ({
   };
 
   const handleMapPress = (event: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     const { latitude, longitude } = event.nativeEvent.coordinate;
-    setLatitude(latitude);  // Correct usage of setLatitude
-    setLongitude(longitude);  // Correct usage of setLongitude
+    setLatitude(latitude);
+    setLongitude(longitude);
   };
 
   return {

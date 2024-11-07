@@ -4,7 +4,7 @@ import Toast from 'react-native-toast-message';
 interface CustomToastProps {
   type: 'success' | 'error' | 'info';
   text1: string;
-  text2: string;
+  text2?: string;
   position?: 'top' | 'bottom';
   visibilityTime?: number;
   autoHide?: boolean;
