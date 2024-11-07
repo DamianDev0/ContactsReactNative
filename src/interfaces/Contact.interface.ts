@@ -19,6 +19,6 @@ export interface Contact2 {
   email?: string | null;
   photo?: string | null
   role?: string | null;
-  latitude?: number | null
-  longitude?: number | null
+  latitude?: number | null | undefined;
+  longitude?: number | null | undefined
 }

@@ -1,47 +1,47 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  Image,
+  ScrollView,
+} from 'react-native';
+import {RouteProp, useRoute, useNavigation} from '@react-navigation/native';
+import MapView, {Marker} from 'react-native-maps';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {RootStackParamList} from '../../types/navigation.types';
 import {useContactDetails} from './hook/ContactDetailsHook';
 import useContacts from '../HomeScreen/hook/useContacts';
 import Loader from '../../components/Loader';
 import EditModal from './components/EditModal';
+import CustomToast from '../../components/CustomToast';
+import ActionButtons from './components/ActionButtons';
+import GenericButton from '../../components/GenericButton';
+import WeatherImage from './components/WeatherImage';
 
 type DetailsScreenRouteProp = RouteProp<RootStackParamList, 'Details'>;
+const {width, height} = Dimensions.get('screen');
 
 const DetailsScreen: React.FC = () => {
   const route = useRoute<DetailsScreenRouteProp>();
-  const {contact} = route.params;
   const navigation = useNavigation();
+  const {contact} = route.params;
 
   const {refreshContacts} = useContacts();
-
-  const {contactData, loading, updateContact, deleteContact} =
-    useContactDetails(contact.recordID, contact);
-  const [isModalVisible, setModalVisible] = useState(false);
-
-  const closeModal = () => {
-    setModalVisible(false);
-  };
-
-  const handleSaveContact = async (updatedContact: {
-    name: string;
-    phone: string;
-    email: string;
-    latitude: number;
-    longitude: number;
-  }) => {
-    await updateContact(updatedContact);
-    await refreshContacts();
-    closeModal();
-  };
-
-  const handleDeleteContact = async () => {
-    await deleteContact();
-    await refreshContacts();
-    Alert.alert('Delete contact succesfully');
-    navigation.goBack();
-  };
+  const {
+    contactData,
+    loading,
+    isModalVisible,
+    toastMessage,
+    toastType,
+    setModalVisible,
+    deleteContact,
+    handleSaveContact,
+    closeModal,
+    weather,
+  } = useContactDetails(contact.recordID, contact);
 
   if (loading) {
     return (
@@ -52,95 +52,208 @@ const DetailsScreen: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.name}>Name: {contactData.name}</Text>
-      <Text style={styles.phone}>Phone: {contactData.phone}</Text>
-      <Text style={styles.email}>
-        Email: {contactData.email ?? 'Not assigned'}
-      </Text>
-      <Text style={styles.role}>Role: {contactData.role}</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
+            <Icon name="arrow-left" size={24} color="white" />
+          </TouchableOpacity>
+          <View style={styles.imageContainer}>
+            <Image
+              style={styles.image}
+              source={
+                contactData.photo
+                  ? {uri: contactData.photo}
+                  : require('../../assets/img/avatar.png')
+              }
+            />
+          </View>
+          <Text style={styles.name}>{contactData.name}</Text>
+          <Text style={styles.role}>{contactData.role}</Text>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => setModalVisible(true)}>
-          <Text style={styles.buttonText}>Edit Contact</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, styles.deleteButton]}
-          onPress={handleDeleteContact}>
-          <Text style={styles.buttonText}>Delete Contact</Text>
-        </TouchableOpacity>
+          <ActionButtons
+            email={contactData.email ?? 'Not assigned'}
+            phone={contactData.phone ?? 'Not assigned'}
+          />
+        </View>
+
+        {/* Tarjeta de clima */}
+        {weather && (
+          <View style={styles.weatherCard}>
+            <WeatherImage weather={weather} />
+            <View>
+              <Text style={styles.weatherText}>{weather.main.temp}°C</Text>
+              <Text style={styles.weatherDescription}>
+                {weather.weather[0].description}
+              </Text>
+            </View>
+          </View>
+        )}
+
+        {/* Mapa con marcador de ubicación */}
+        {contactData.latitude && contactData.longitude && (
+          <View style={styles.mapContainer}>
+            <MapView
+              style={styles.map}
+              initialRegion={{
+                latitude: contactData.latitude,
+                longitude: contactData.longitude,
+                latitudeDelta: 0.05,
+                longitudeDelta: 0.05,
+              }}
+              zoomEnabled={true}
+              scrollEnabled={true}
+              showsCompass={true}
+            >
+              <Marker
+                coordinate={{
+                  latitude: contactData.latitude,
+                  longitude: contactData.longitude,
+                }}
+                description="Ubicación del contacto"
+              />
+            </MapView>
+          </View>
+        )}
+        <View style={styles.buttonContainer}>
+          <GenericButton
+            title="Edit Contact"
+            onPress={() => setModalVisible(true)}
+            color="#000"
+            width={150}
+          />
+          <GenericButton
+            title="Delete Contact"
+            color="#000"
+            onPress={() => deleteContact(refreshContacts)}
+            width={150}
+          />
+        </View>
+        <EditModal
+          visible={isModalVisible}
+          onClose={closeModal}
+          onSave={updatedContact =>
+            handleSaveContact(updatedContact, refreshContacts)
+          }
+          contactName={contactData.name || ''}
+          contactPhone={contactData.phone || ''}
+          contactEmail={contactData.email || ''}
+          contactLatitude={contactData.latitude || 0}
+          contactLongitude={contactData.longitude || 0}
+        />
+
+        {toastMessage && toastType && (
+          <CustomToast text1={toastMessage} type={toastType} />
+        )}
       </View>
-
-      <EditModal
-        visible={isModalVisible}
-        onClose={closeModal}
-        onSave={handleSaveContact}
-        contactName={contactData.name || ''}
-        contactPhone={contactData.phone || ''}
-        contactEmail={contactData.email || ''}
-        contactLatitude={contactData.latitude || 0}
-        contactLongitude={contactData.longitude || 0}
-      />
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#fff',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  header: {
+    backgroundColor: '#000',
+    width: width,
+    height: height * 0.4,
+    paddingHorizontal: 20,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+    position: 'relative',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 15,
+    left: 20,
+  },
+  imageContainer: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    marginBottom: 15,
+    marginTop: 15,
+  },
+  image: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
   },
   name: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '600',
     marginBottom: 10,
-    color: 'black',
-  },
-  phone: {
-    fontSize: 18,
-    marginBottom: 10,
-    color: 'black',
-  },
-  email: {
-    fontSize: 18,
-    marginBottom: 10,
-    color: 'black',
+    color: '#FFF',
   },
   role: {
-    fontSize: 18,
-    marginBottom: 10,
-    color: 'black',
+    fontSize: 14,
+    color: '#808b96',
+    fontWeight: '300',
+    textTransform: 'capitalize',
   },
-  location: {
-    fontSize: 18,
-    marginBottom: 10,
-    color: 'black',
-  },
-  photo: {
-    width: 100,
-    height: 100,
+  weatherCard: {
+    padding: 15,
+    backgroundColor: '#000',
+    borderRadius: 10,
+    marginHorizontal: 20,
+    alignItems: 'center',
+    width: width * 0.9,
+    height: 130,
+    flexDirection: 'row',
+    marginBottom: 20,
+    shadowColor: '#FFF',
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 6,
     marginTop: 10,
-    borderRadius: 50,
+  },
+  weatherText: {
+    fontSize: 30,
+    color: '#FFF',
+    marginTop: 10,
+  },
+  weatherDescription: {
+    fontSize: 14,
+    color: '#808b96',
+    marginTop: 5,
+    textAlign: 'center',
+  },
+  mapContainer: {
+    width: width * 0.9,
+    height: 250,
+    borderRadius: 20,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginHorizontal: 20,
+    marginTop: 5 ,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  map: {
+    width: '100%',
+    height: '100%',
   },
   buttonContainer: {
     marginTop: 20,
-  },
-  button: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 5,
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-  },
-  deleteButton: {
-    backgroundColor: '#FF0000',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
+    width: width,
   },
 });
 
