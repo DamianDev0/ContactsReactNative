@@ -70,7 +70,7 @@ const FormScreen: React.FC = () => {
 
         <GenericButton
           title="Select Location"
-          color="#000"
+          backgroundColor="#000"
           width={350}
           height={40}
           onPress={() => setModalVisible(true)}
@@ -79,14 +79,14 @@ const FormScreen: React.FC = () => {
         <View style={styles.containerButtons}>
           <GenericButton
             title="Add"
-            color="#000"
+            backgroundColor="#000"
             width={130}
             height={45}
             onPress={onSubmit}
           />
           <GenericButton
             title="Cancel"
-            color="#000"
+            backgroundColor="#000"
             width={130}
             height={45}
             onPress={() => navigation.goBack()}

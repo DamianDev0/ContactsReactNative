@@ -15,7 +15,7 @@ const NotFound: React.FC<NotFoundProps> = ({ onAddContact }) => {
       <Text style={styles.textSubNotFound}>
         You don't have any contacts yet. Start by adding a new contact to get started!
       </Text>
-      <GenericButton title="Add new contacts" color="#000" onPress={onAddContact} />
+      <GenericButton title="Add new contacts" backgroundColor="#000" onPress={onAddContact} />
     </View>
   );
 };

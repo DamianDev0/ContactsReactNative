@@ -57,8 +57,8 @@ const MapModal: React.FC<MapModalProps> = ({ visible, onSave, onClose }) => {
           )}
         </MapView>
         <View style={styles.modalButtons}>
-          <GenericButton title="Close" onPress={onClose} color="#000" width={150} />
-          <GenericButton title="Save" onPress={handleSave} color="#000" width={150} />
+          <GenericButton title="Close" onPress={onClose} backgroundColor="#000" width={150} />
+          <GenericButton title="Save" onPress={handleSave} backgroundColor="#000" width={150} />
         </View>
       </View>
     </Modal>
