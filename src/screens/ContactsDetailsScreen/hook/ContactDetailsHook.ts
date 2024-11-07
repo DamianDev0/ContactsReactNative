@@ -20,8 +20,11 @@ export const useContactDetails = (
   const [contactData, setContactData] = useState<Contact2>(initialContact);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [toastType, setToastType] = useState<'success' | 'error' | 'info' | null >(null);
+  const [toastType, setToastType] = useState<
+    'success' | 'error' | 'info' | null
+  >(null);
   const [weather, setWeather] = useState<WeatherResponse | null>(null);
   const [weatherLoading, setWeatherLoading] = useState(true);
   const [weatherError, setWeatherError] = useState<string | null>(null);
@@ -45,7 +48,7 @@ export const useContactDetails = (
 
             const {latitude, longitude} = response.data;
             if (latitude != null && longitude != null) {
-              fetchWeather(latitude, longitude); // Fetch weather data when contact data is loaded
+              fetchWeather(latitude, longitude);
             } else {
               setWeatherError('Invalid latitude or longitude');
             }
@@ -126,6 +129,8 @@ export const useContactDetails = (
     } catch (error) {
       setToastMessage('Error deleting contact');
       setToastType('error');
+    } finally {
+      setDeleteModalVisible(false);
     }
   };
 
@@ -164,5 +169,6 @@ export const useContactDetails = (
     deleteContact,
     handleSaveContact,
     closeModal,
+    isDeleteModalVisible,
   };
 };

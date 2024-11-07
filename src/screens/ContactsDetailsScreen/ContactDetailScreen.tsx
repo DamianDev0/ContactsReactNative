@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -18,8 +18,8 @@ import Loader from '../../components/Loader';
 import EditModal from './components/EditModal';
 import CustomToast from '../../components/CustomToast';
 import ActionButtons from './components/ActionButtons';
-import GenericButton from '../../components/GenericButton';
 import WeatherImage from './components/WeatherImage';
+import DeleteModal from './components/DeleteModal'; // Importa el DeleteModal
 
 type DetailsScreenRouteProp = RouteProp<RootStackParamList, 'Details'>;
 const {width, height} = Dimensions.get('screen');
@@ -43,6 +43,10 @@ const DetailsScreen: React.FC = () => {
     weather,
   } = useContactDetails(contact.recordID, contact);
 
+  // Estado para mostrar el DeleteModal
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -60,6 +64,17 @@ const DetailsScreen: React.FC = () => {
             onPress={() => navigation.goBack()}>
             <Icon name="arrow-left" size={24} color="white" />
           </TouchableOpacity>
+
+          {/* Iconos para editar y eliminar */}
+          <View style={styles.actionIcons}>
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <Icon name="edit" size={24} color="white" style={styles.icon} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setDeleteModalVisible(true)}>
+              <Icon name="trash" size={24} color="white" style={styles.icon} />
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.imageContainer}>
             <Image
               style={styles.image}
@@ -105,8 +120,7 @@ const DetailsScreen: React.FC = () => {
               }}
               zoomEnabled={true}
               scrollEnabled={true}
-              showsCompass={true}
-            >
+              showsCompass={true}>
               <Marker
                 coordinate={{
                   latitude: contactData.latitude,
@@ -117,20 +131,7 @@ const DetailsScreen: React.FC = () => {
             </MapView>
           </View>
         )}
-        <View style={styles.buttonContainer}>
-          <GenericButton
-            title="Edit Contact"
-            onPress={() => setModalVisible(true)}
-            color="#000"
-            width={150}
-          />
-          <GenericButton
-            title="Delete Contact"
-            color="#000"
-            onPress={() => deleteContact(refreshContacts)}
-            width={150}
-          />
-        </View>
+
         <EditModal
           visible={isModalVisible}
           onClose={closeModal}
@@ -147,6 +148,16 @@ const DetailsScreen: React.FC = () => {
         {toastMessage && toastType && (
           <CustomToast text1={toastMessage} type={toastType} />
         )}
+
+        <DeleteModal
+          visible={isDeleteModalVisible}
+          onClose={() => setDeleteModalVisible(false)}
+          onConfirm={() => {
+            deleteContact(refreshContacts);
+            setDeleteModalVisible(false);
+          }}
+          contactName={contactData?.name ?? undefined}
+        />
       </View>
     </ScrollView>
   );
@@ -174,6 +185,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 15,
     left: 20,
+  },
+  actionIcons: {
+    position: 'absolute',
+    top: 15,
+    right: 20,
+    flexDirection: 'row',
+  },
+  icon: {
+    marginLeft: 15,
   },
   imageContainer: {
     width: 150,
@@ -213,7 +233,7 @@ const styles = StyleSheet.create({
     height: 130,
     flexDirection: 'row',
     marginBottom: 20,
-    shadowColor: '#FFF',
+    shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 6,
@@ -227,33 +247,18 @@ const styles = StyleSheet.create({
   weatherDescription: {
     fontSize: 14,
     color: '#808b96',
-    marginTop: 5,
-    textAlign: 'center',
+    textTransform: 'capitalize',
   },
   mapContainer: {
     width: width * 0.9,
-    height: 250,
+    height: 300,
     borderRadius: 20,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginHorizontal: 20,
-    marginTop: 5 ,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+    marginBottom: 20,
+    alignSelf: 'center',
   },
   map: {
-    width: '100%',
-    height: '100%',
-  },
-  buttonContainer: {
-    marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: width,
+    flex: 1,
   },
 });
 
