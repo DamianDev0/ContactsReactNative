@@ -1,11 +1,11 @@
 import React from 'react';
 import {Text, TouchableOpacity, StyleSheet, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Contact2} from '../../../interfaces/Contact.interface';
+import {Contact} from '../../../interfaces/Contact.interface';
 
 interface CardContactProps {
-  item: Contact2;
-  onPress: (contact: Contact2) => void;
+  item: Contact;
+  onPress: (contact: Contact) => void;
 }
 
 const CardContact: React.FC<CardContactProps> = ({item, onPress}) => {

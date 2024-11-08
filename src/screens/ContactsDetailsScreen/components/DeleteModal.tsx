@@ -40,14 +40,14 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
             <GenericButton
               title="Cancel"
               onPress={onClose}
-              color="#000"
+              backgroundColor="#000"
               width={120}
               height={45}
             />
             <GenericButton
               title="Delete"
               onPress={onConfirm}
-              color="#000"
+              backgroundColor="#000"
               width={120}
               height={45}
             />

@@ -8,13 +8,13 @@ import {
   Dimensions,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {Contact2} from '../../../interfaces/Contact.interface';
+import {Contact} from '../../../interfaces/Contact.interface';
 import {StackNavigationProp} from '@react-navigation/stack';
 import CardContact from './CardContact';
 import {RootStackParamList} from '../../../types/navigation.types';
 
 interface ContactListProps {
-  contacts: Contact2[];
+  contacts: Contact[];
   loading: boolean;
 }
 
@@ -33,7 +33,7 @@ const ContactList: React.FC<ContactListProps> = ({contacts, loading}) => {
       }
       acc[firstLetter].push(contact);
       return acc;
-    }, {} as Record<string, Contact2[]>);
+    }, {} as Record<string, Contact[]>);
 
     return Object.keys(groupedContacts)
       .sort()
@@ -43,11 +43,11 @@ const ContactList: React.FC<ContactListProps> = ({contacts, loading}) => {
       }));
   }, [contacts]);
 
-  const handleContactPress = (contact: Contact2) => {
+  const handleContactPress = (contact: Contact) => {
     navigation.navigate('Details', {contact});
   };
 
-  const renderItem = ({item}: {item: Contact2}) => (
+  const renderItem = ({item}: {item: Contact}) => (
     <CardContact item={item} onPress={handleContactPress} />
   );
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, Text, StyleSheet} from 'react-native';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 interface GenericButtonProps {
   title: string;
@@ -7,16 +7,18 @@ interface GenericButtonProps {
   disabled?: boolean;
   width?: number;
   height?: number;
+  backgroundColor?: string;
   color?: string;
 }
 
 const GenericButton: React.FC<GenericButtonProps> = ({
   title,
   onPress,
-  disabled,
-  width,
-  height,
-  color = '#007BFF',
+  disabled = false,
+  width = 200,
+  height = 50,
+  backgroundColor = '#007BFF',
+  color = '#fff',
 }) => {
   return (
     <TouchableOpacity
@@ -26,13 +28,14 @@ const GenericButton: React.FC<GenericButtonProps> = ({
         styles.button,
         // eslint-disable-next-line react-native/no-inline-styles
         {
-          width: width || 200,
-          height: height || 50,
-          backgroundColor: color,
+          width,
+          height,
+          backgroundColor,
           opacity: disabled ? 0.5 : 1,
         },
-      ]}>
-      <Text style={styles.buttonText}>{title}</Text>
+      ]}
+    >
+      <Text style={[styles.buttonText, { color }]}>{title}</Text>
     </TouchableOpacity>
   );
 };
@@ -53,8 +56,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3.5,
   },
   buttonText: {
-    color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

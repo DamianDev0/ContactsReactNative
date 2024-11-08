@@ -1,30 +1,29 @@
 import {useState, useEffect} from 'react';
 import {
-  ApiResponse,
   getContactById,
   updateContactById,
   deleteContactById,
 } from '../../../services/ContactsManager';
 import {useAuth} from '../../../context/AuthContext';
-import {Contact2} from '../../../interfaces/Contact.interface';
+import {Contact} from '../../../interfaces/Contact.interface';
 import {useNavigation} from '@react-navigation/native';
 import {getWeatherData} from '../../../services/weatherService';
 import {WeatherResponse} from '../../../types/weather.types';
+import { ApiResponse } from '../../../types/apiresponse';
 
 export const useContactDetails = (
   recordID: string,
-  initialContact: Contact2,
+  initialContact: Contact,
 ) => {
   const {token} = useAuth();
   const navigation = useNavigation();
-  const [contactData, setContactData] = useState<Contact2>(initialContact);
+  const [contactData, setContactData] = useState<Contact>(initialContact);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<
-    'success' | 'error' | 'info' | null
-  >(null);
+    'success' | 'error' | 'info' | null>(null);
   const [weather, setWeather] = useState<WeatherResponse | null>(null);
   const [weatherLoading, setWeatherLoading] = useState(true);
   const [weatherError, setWeatherError] = useState<string | null>(null);
@@ -93,7 +92,7 @@ export const useContactDetails = (
     };
   }, [recordID, token]);
 
-  const updateContact = async (updatedData: Partial<Contact2>) => {
+  const updateContact = async (updatedData: Partial<Contact>) => {
     if (!token) {
       console.error('No token found, user is not authenticated.');
       return;
@@ -124,8 +123,8 @@ export const useContactDetails = (
       await deleteContactById(recordID, token);
       setToastMessage('Delete contact successfully');
       setToastType('success');
-      refreshContacts();
       navigation.goBack();
+      refreshContacts();
     } catch (error) {
       setToastMessage('Error deleting contact');
       setToastType('error');

@@ -19,7 +19,8 @@ import EditModal from './components/EditModal';
 import CustomToast from '../../components/CustomToast';
 import ActionButtons from './components/ActionButtons';
 import WeatherImage from './components/WeatherImage';
-import DeleteModal from './components/DeleteModal'; // Importa el DeleteModal
+import DeleteModal from './components/DeleteModal';
+import useImageUploader from './hook/useImage';
 
 type DetailsScreenRouteProp = RouteProp<RootStackParamList, 'Details'>;
 const {width, height} = Dimensions.get('screen');
@@ -28,8 +29,8 @@ const DetailsScreen: React.FC = () => {
   const route = useRoute<DetailsScreenRouteProp>();
   const navigation = useNavigation();
   const {contact} = route.params;
-
   const {refreshContacts} = useContacts();
+
   const {
     contactData,
     loading,
@@ -43,11 +44,14 @@ const DetailsScreen: React.FC = () => {
     weather,
   } = useContactDetails(contact.recordID, contact);
 
-  // Estado para mostrar el DeleteModal
+  const {selectImage, uploading} = useImageUploader({
+    contactId: contactData.recordID,
+    onImageUpload: (photoUrl: string) => (contactData.photo = photoUrl),
+    refreshContacts,
+  });
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
 
-
-  if (loading) {
+  if (loading || uploading) {
     return (
       <View style={styles.container}>
         <Loader />
@@ -65,7 +69,6 @@ const DetailsScreen: React.FC = () => {
             <Icon name="arrow-left" size={24} color="white" />
           </TouchableOpacity>
 
-          {/* Iconos para editar y eliminar */}
           <View style={styles.actionIcons}>
             <TouchableOpacity onPress={() => setModalVisible(true)}>
               <Icon name="edit" size={24} color="white" style={styles.icon} />
@@ -76,14 +79,16 @@ const DetailsScreen: React.FC = () => {
           </View>
 
           <View style={styles.imageContainer}>
-            <Image
-              style={styles.image}
-              source={
-                contactData.photo
-                  ? {uri: contactData.photo}
-                  : require('../../assets/img/avatar.png')
-              }
-            />
+            <TouchableOpacity onPress={selectImage}>
+              <Image
+                style={styles.image}
+                source={
+                  contactData.photo
+                    ? {uri: contactData.photo}
+                    : require('../../assets/img/avatar.png')
+                }
+              />
+            </TouchableOpacity>
           </View>
           <Text style={styles.name}>{contactData.name}</Text>
           <Text style={styles.role}>{contactData.role}</Text>
@@ -94,7 +99,6 @@ const DetailsScreen: React.FC = () => {
           />
         </View>
 
-        {/* Tarjeta de clima */}
         {weather && (
           <View style={styles.weatherCard}>
             <WeatherImage weather={weather} />
@@ -107,8 +111,7 @@ const DetailsScreen: React.FC = () => {
           </View>
         )}
 
-        {/* Mapa con marcador de ubicación */}
-        {contactData.latitude && contactData.longitude && (
+        {contactData.latitude && contactData.longitude ? (
           <View style={styles.mapContainer}>
             <MapView
               style={styles.map}
@@ -130,8 +133,15 @@ const DetailsScreen: React.FC = () => {
               />
             </MapView>
           </View>
+        ) : (
+          <View style={styles.noLocationContainer}>
+            <Image
+              source={require('../../assets/img/notfoundmap.png')}
+              style={styles.noLocationImage}
+            />
+            <Text style={styles.noLocationText}>No location available</Text>
+          </View>
         )}
-
         <EditModal
           visible={isModalVisible}
           onClose={closeModal}
@@ -251,7 +261,7 @@ const styles = StyleSheet.create({
   },
   mapContainer: {
     width: width * 0.9,
-    height: 300,
+    height: 262,
     borderRadius: 20,
     overflow: 'hidden',
     marginBottom: 20,
@@ -259,6 +269,29 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+
+  noLocationContainer: {
+    width: width * 0.9,
+    height: 422,
+    borderRadius: 20,
+    overflow: 'hidden',
+    marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  noLocationImage: {
+    width: 350,
+    height: 350,
+    resizeMode: 'contain',
+  },
+  noLocationText: {
+    marginTop: 10,
+    fontSize: 20,
+    color: '#555',
+    fontWeight: 'heavy',
+    textAlign: 'center',
   },
 });
 

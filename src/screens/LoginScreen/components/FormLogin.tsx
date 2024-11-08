@@ -5,15 +5,18 @@ import {
   Text,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
+  Platform,
+  Image,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import InputGeneric from '../../../components/GenericInput';
 import GenericButton from '../../../components/GenericButton';
 import useLogin from '../hook/login.hook';
 
-const { width } = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
-const FormLogin = () => {
+const FormLogin: React.FC = () => {
   const {
     email,
     setEmail,
@@ -30,79 +33,124 @@ const FormLogin = () => {
   };
 
   return (
-    <View style={styles.formContainer}>
-      {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
-      <View style={styles.inputsContainer}>
-        <InputGeneric
-          placeholder="Email"
-          width={300}
-          marginBottom={20}
-          value={email}
-          onChangeText={setEmail}
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+      <View style={styles.content}>
+        <Image
+          source={require('../../../assets/img/cartoon.png')}
+          style={styles.logoImage}
+          resizeMode="contain"
         />
-        <InputGeneric
-          placeholder="Password"
-          width={300}
-          secureTextEntry={true}
-          value={password}
-          onChangeText={setPassword}
-        />
+        <View style={styles.formContainer}>
+          <View style={styles.inputsContainer}>
+            <InputGeneric
+              placeholder="Email"
+              width={300}
+              marginBottom={20}
+              value={email}
+              onChangeText={setEmail}
+              icon="envelope"
+              opacity={0.6}
+            />
+            <InputGeneric
+              placeholder="Password"
+              width={300}
+              secureTextEntry={true}
+              value={password}
+              onChangeText={setPassword}
+              opacity={0.6}
+              icon="lock"
+            />
+            {errorMessage && (
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            )}
+          </View>
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <Text style={styles.orText}>Or continue with</Text>
+            <View style={styles.divider} />
+          </View>
+          <TouchableOpacity
+            style={styles.googleButton}
+            onPress={handleGoogleLogin}>
+            <FontAwesome
+              name="google"
+              size={20}
+              color="#000"
+              style={styles.googleIcon}
+            />
+          </TouchableOpacity>
+          <GenericButton
+            title={loading ? 'Loading...' : 'Log in'}
+            backgroundColor="#FFF"
+            height={40}
+            color="#000"
+            onPress={handleLogin}
+            disabled={loading}
+          />
+          <TouchableOpacity onPress={handleSignUpNavigation}>
+            <Text style={styles.signupText}>
+              Don't have an account? Sign Up
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
-        <Text style={styles.orText}>Or continue with</Text>
-        <View style={styles.divider} />
-      </View>
-      <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
-        <FontAwesome
-          name="google"
-          size={20}
-          color="#fff"
-          style={styles.googleIcon}
-        />
-      </TouchableOpacity>
-      <GenericButton
-        title={loading ? 'Loading...' : 'Log in'}
-        color="#000"
-        height={40}
-        onPress={handleLogin}
-        disabled={loading}
-      />
-      <TouchableOpacity onPress={handleSignUpNavigation}>
-        <Text style={styles.signupText}>Don't have an account? Sign Up</Text>
-      </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  formContainer: {
-    flex: 0.6,
+  container: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column',
-    backgroundColor: '#fca9a5',
+    paddingHorizontal: 20,
+  },
+  content: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: height * 0.9,
+    position: 'relative',
+  },
+  logoImage: {
+    width: 370,
+    height: 385,
+    position: 'absolute',
+    top: 10,
+    zIndex: 2,
+  },
+  formContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#000',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     width: width * 0.9,
+    height: 610,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
+    shadowOffset: {width: 0, height: 5},
     shadowOpacity: 0.3,
     shadowRadius: 10,
-    padding: 1,
+    padding: 30,
     elevation: 8,
-    zIndex: 1,
-    margin: 'auto',
+    marginTop: 100,
   },
   errorText: {
-    color: 'red',
-    marginBottom: 10,
+    color: '#a93226',
+    fontSize: 10,
+    fontWeight: 'bold',
+    marginTop: 10,
   },
   inputsContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 30,
+    width: '100%',
+    marginTop: 210,
   },
   dividerContainer: {
     flexDirection: 'row',
@@ -113,17 +161,17 @@ const styles = StyleSheet.create({
   divider: {
     flex: 0.9,
     height: 1,
-    backgroundColor: '#000',
+    backgroundColor: '#FFF',
   },
   orText: {
     marginHorizontal: 10,
-    fontSize: 14,
-    color: '#333',
+    fontSize: 12,
+    color: '#FFF',
   },
   googleButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#000',
+    backgroundColor: '#fff',
     padding: 10,
     borderRadius: 50,
     width: 50,
@@ -135,7 +183,7 @@ const styles = StyleSheet.create({
   },
   signupText: {
     marginTop: 15,
-    color: '#333',
+    color: '#FFF',
     fontSize: 10,
     textDecorationLine: 'underline',
     textAlign: 'center',

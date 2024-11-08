@@ -17,6 +17,10 @@ const useRegister = () => {
     }
   };
 
+  const handleLoginNavigation = () => {
+    navigation.navigate('Login');
+  };
+
   return {
     email,
     setEmail,
@@ -26,6 +30,7 @@ const useRegister = () => {
     loading,
     errorMessage,
     navigation,
+    handleLoginNavigation,
   };
 };
 

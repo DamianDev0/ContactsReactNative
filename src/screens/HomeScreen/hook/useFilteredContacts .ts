@@ -1,11 +1,11 @@
 import {useState, useEffect} from 'react';
 import useContacts from './useContacts';
-import {Contact2} from '../../../interfaces/Contact.interface';
+import {Contact} from '../../../interfaces/Contact.interface';
 
 const useFilteredContacts = () => {
   const {contacts} = useContacts();
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [filteredContacts, setFilteredContacts] = useState<Contact2[]>([]);
+  const [filteredContacts, setFilteredContacts] = useState<Contact[]>([]);
 
   useEffect(() => {
     const results = contacts.filter(contact =>

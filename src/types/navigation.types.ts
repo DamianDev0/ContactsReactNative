@@ -1,5 +1,4 @@
 export type RootStackParamList = {
-  navigate(arg0: string): unknown;
   Onboarding: undefined;
   Form: undefined;
   Main: undefined

@@ -3,15 +3,19 @@ import {
   Dimensions,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import InputGeneric from '../../../components/GenericInput';
 import GenericButton from '../../../components/GenericButton';
-import useLogin from '../hook/register.hook';
+import useregister from '../hook/register.hook';
 
-const {width} = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
-const FormRegister = () => {
+const FormRegister: React.FC = () => {
   const {
     email,
     setEmail,
@@ -20,80 +24,115 @@ const FormRegister = () => {
     handleRegister,
     loading,
     errorMessage,
-  } = useLogin();
+    handleLoginNavigation,
+  } = useregister();
 
   return (
-    <View style={styles.formContainer}>
-      {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
-      <View style={styles.inputsContainer}>
-        <InputGeneric
-          placeholder="Email"
-          width={300}
-          marginBottom={20}
-          value={email}
-          onChangeText={setEmail}
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+      <View style={styles.content}>
+        <Image
+          source={require('../../../assets/img/cartoon2.png')}
+          style={styles.logoImage}
+          resizeMode="contain"
         />
-        <InputGeneric
-          placeholder="Password"
-          width={300}
-          secureTextEntry={true}
-          value={password}
-          onChangeText={setPassword}
-        />
+        <View style={styles.formContainer}>
+          <View style={styles.inputsContainer}>
+            <InputGeneric
+              placeholder="Email"
+              width={300}
+              marginBottom={20}
+              value={email}
+              opacity={0.6}
+              onChangeText={setEmail}
+              icon="envelope"
+            />
+            <InputGeneric
+              placeholder="Password"
+              width={300}
+              secureTextEntry={true}
+              value={password}
+              onChangeText={setPassword}
+              opacity={0.6}
+              icon="lock"
+            />
+                 {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+          </View>
+          <GenericButton
+            title={loading ? 'Loading...' : 'Sign Up'}
+            backgroundColor="#FFF"
+            height={40}
+            color="#000"
+            onPress={handleRegister}
+            disabled={loading}
+          />
+          <TouchableOpacity>
+            <Text style={styles.signupText} onPress={handleLoginNavigation}>
+              Already have an account? Log In
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <GenericButton
-        title={loading ? 'Loading...' : 'Sign Up'}
-        color="#000"
-        height={40}
-        onPress={handleRegister}
-        disabled={loading}
-      />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  formContainer: {
-    flex: 0.6,
+  container: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column',
-    backgroundColor: '#fca9a5',
+    paddingHorizontal: 20,
+  },
+  content: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: height * 0.9,
+    position: 'relative',
+  },
+  logoImage: {
+    width: 390,
+    height: 395,
+    position: 'absolute',
+    top: 10,
+    zIndex: 2,
+  },
+  formContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#000',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     width: width * 0.9,
+    height: 500,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 5},
     shadowOpacity: 0.3,
     shadowRadius: 10,
-    padding: 1,
+    padding: 30,
     elevation: 8,
-    zIndex: 1,
-    margin: 'auto',
+    marginTop: 100,
   },
   errorText: {
-    color: 'red',
-    marginBottom: 10,
+    color: '#a93226',
+    fontSize: 10,
+    fontWeight: 'bold',
+    marginTop: 10,
   },
   inputsContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
-  },
-  googleButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#000',
-    padding: 10,
-    borderRadius: 50,
-    width: 50,
-    height: 50,
-    marginVertical: 10,
+    marginBottom: 30,
+    width: '100%',
+    marginTop: 100,
   },
   signupText: {
     marginTop: 15,
-    color: '#333',
+    color: '#FFF',
     fontSize: 10,
     textDecorationLine: 'underline',
     textAlign: 'center',

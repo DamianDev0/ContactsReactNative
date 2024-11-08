@@ -1,5 +1,6 @@
 import React from 'react';
-import {TextInput, StyleSheet, TextInputProps} from 'react-native';
+import {TextInput, StyleSheet, TextInputProps, View} from 'react-native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 interface InputProps extends TextInputProps {
   placeholder: string;
@@ -10,6 +11,8 @@ interface InputProps extends TextInputProps {
   width?: number;
   color?: string;
   marginBottom?: number;
+  opacity?: number;
+  icon?: string;
 }
 
 const InputGeneric: React.FC<InputProps> = ({
@@ -17,38 +20,55 @@ const InputGeneric: React.FC<InputProps> = ({
   value,
   onChangeText,
   editable = true,
-  height,
-  width,
+  height = 50,
+  width = 350,
   color,
   marginBottom,
+  opacity = 1,
+  icon,
 }) => {
   return (
-    <TextInput
-      style={[
-        styles.input,
-        { height, width, color, marginBottom },
-      ]}
-      placeholder={placeholder}
-      placeholderTextColor="rgba(0, 0, 0, 0.5)"
-      value={value}
-      onChangeText={onChangeText}
-      editable={editable}
-    />
+    <View style={[styles.inputContainer, {height, width, marginBottom}]}>
+      {icon && (
+        <FontAwesome name={icon} size={20} color="#000" style={styles.icon} />
+      )}
+      <TextInput
+        style={[
+          styles.input,
+          {height, width, color, opacity},
+        ]}
+        placeholder={placeholder}
+        placeholderTextColor="rgba(0, 0, 0, 0.5)"
+        value={value}
+        onChangeText={onChangeText}
+        editable={editable}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  input: {
-    padding: 9,
-    marginBottom: 20,
-    borderRadius: 10,
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#FFF',
-    width: 350,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 5},
-    color: '#000',
     shadowRadius: 4,
     elevation: 5,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    padding: 9,
+    borderRadius: 10,
+    backgroundColor: '#FFF',
+    color: '#000',
   },
 });
 
