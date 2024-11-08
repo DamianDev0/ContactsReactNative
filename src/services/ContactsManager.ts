@@ -2,7 +2,7 @@ import axios from 'axios';
 import {Contact} from '../interfaces/Contact.interface';
 import {ApiResponse} from '../types/apiresponse';
 
-const API_URL = 'http://192.168.1.2:4000/api/v1/contacts';
+const API_URL = 'http://192.168.89.8:4000/api/v1/contacts';
 
 const getContactById = async (
   recordID: string,
