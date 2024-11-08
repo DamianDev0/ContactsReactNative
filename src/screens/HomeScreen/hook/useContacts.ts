@@ -4,7 +4,7 @@ import { PermissionsAndroid, Alert } from 'react-native';
 import Contacts from 'react-native-contacts';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Contact2 } from '../../../interfaces/Contact.interface';
+import { Contact } from '../../../interfaces/Contact.interface';
 import { useAuth } from '../../../context/AuthContext';
 import { getAllContacts } from '../../../services/ContactsManager';
 
@@ -12,7 +12,7 @@ import { getAllContacts } from '../../../services/ContactsManager';
 
 
 const useContacts = () => {
-  const [contacts, setContacts] = useState<Contact2[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const { token } = useAuth();
 
@@ -72,7 +72,7 @@ const useContacts = () => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-shadow
-  const sendContactsToBackend = async (contacts: Contact2[]) => {
+  const sendContactsToBackend = async (contacts: Contact[]) => {
     try {
       const formattedContacts = contacts.map(contact => ({
         recordID: contact.recordID,

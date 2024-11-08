@@ -1,98 +1,54 @@
 import axios from 'axios';
-import {Contact2} from '../interfaces/Contact.interface';
+import {Contact} from '../interfaces/Contact.interface';
+import {ApiResponse} from '../types/apiresponse';
 
 const API_URL = 'http://192.168.1.2:4000/api/v1/contacts';
 
-export interface ApiResponse {
-  code: number;
-  data: Contact2;
-  message: string;
-}
-
-// GET: Obtener contacto por ID
-export const getContactById = async (
+const getContactById = async (
   recordID: string,
   token: string,
 ): Promise<ApiResponse> => {
-  if (!token) {
-    throw new Error('No token found, user is not authenticated.');
-  }
-
-  try {
-    const response = await axios.get(`${API_URL}/${recordID}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching contact details:', error);
-    throw error;
-  }
+  if (!token) {throw new Error('No token found, user is not authenticated.');}
+  const response = await axios.get(`${API_URL}/${recordID}`, {
+    headers: {Authorization: `Bearer ${token}`},
+  });
+  return response.data;
 };
 
-export const getAllContacts = async (token: string): Promise<Contact2[]> => {
-  try {
-    const response = await axios.get(
-      'http://192.168.1.2:4000/api/v1/contacts',
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-    return response.data.data;
-  } catch (error) {
-    console.error('Error in getAllContacts:', error);
-    throw error;
-  }
+const getAllContacts = async (token: string): Promise<Contact[]> => {
+  const response = await axios.get(API_URL, {
+    headers: {Authorization: `Bearer ${token}`},
+  });
+  return response.data.data;
 };
 
-export const updateContactById = async (
+const updateContactById = async (
   recordID: string,
-  updateContactData: Partial<Contact2>,
+  updateData: FormData | Partial<Contact>,
   token: string,
-): Promise<ApiResponse> => {
-  if (!token) {
-    throw new Error('No token found, user is not authenticated.');
-  }
-
-  try {
-    const response = await axios.patch(
-      `${API_URL}/${recordID}`,
-      updateContactData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Error updating contact:', error);
-    throw error;
-  }
+): Promise<ApiResponse<Contact>> => {
+  if (!token) {throw new Error('No token found, user is not authenticated.');}
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    'Content-Type':
+      updateData instanceof FormData
+        ? 'multipart/form-data'
+        : 'application/json',
+  };
+  const response = await axios.patch(`${API_URL}/${recordID}`, updateData, {
+    headers,
+  });
+  return response.data as ApiResponse<Contact>;
 };
-export const deleteContactById = async (
+
+const deleteContactById = async (
   recordID: string,
   token: string,
 ): Promise<void> => {
-  if (!token) {
-    throw new Error('No token found, user is not authenticated.');
-  }
-
-  console.log(`Attempting to delete contact with ID: ${recordID}`);
-  try {
-    await axios.delete(`${API_URL}/${recordID}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  } catch (error: any) {
-    console.error(
-      'Error deleting contact:',
-      error.response ? error.response.data : error,
-    );
-    throw error;
-  }
+  if (!token) {throw new Error('No token found, user is not authenticated.');}
+  await axios.delete(`${API_URL}/${recordID}`, {
+    headers: {Authorization: `Bearer ${token}`},
+  });
 };
+
+export {getContactById, getAllContacts, updateContactById, deleteContactById};
