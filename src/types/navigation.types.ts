@@ -1,4 +1,5 @@
 export type RootStackParamList = {
+  goBack(): unknown;
   navigate(arg0: string): unknown;
   Onboarding: undefined;
   Form: undefined;
@@ -11,6 +12,4 @@ export type RootStackParamList = {
 export type MainTabParamList = {
   Home: undefined;
   Form: undefined;
-  Map: undefined;
-  LogOut: undefined;
 };

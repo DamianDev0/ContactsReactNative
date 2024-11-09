@@ -1,4 +1,3 @@
-// src/navigation/AppNavigation.tsx
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -10,7 +9,6 @@ import OnboardingScreen from '../screens/OnboardingScreen/OnboardingScreen';
 import FormScreen from '../screens/FormScreen/FormScreen';
 import ContactDetailScreen from '../screens/ContactsDetailsScreen/ContactDetailScreen';
 import TabBarIcon from './TabBarIcon';
-import MapScreen from '../screens/MapScreen/MapScreen';
 import LoginScreen from '../screens/LoginScreen/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen/SignUpScreen';
 import ProtectedRoute from './ProtectedRoute';
@@ -26,7 +24,7 @@ const MyTabs = () => (
       tabBarIcon: ({color, size}) => (
         <TabBarIcon routeName={route.name} color={color} size={size} />
       ),
-      tabBarActiveTintColor: '#7d3c98',
+      tabBarActiveTintColor: '#34495e',
       tabBarInactiveTintColor: '#000',
       tabBarStyle: {
         backgroundColor: '#f9f9f9',
@@ -38,7 +36,6 @@ const MyTabs = () => (
     })}>
     <Tab.Screen name="Home" component={HomeScreen} />
     <Tab.Screen name="Form" component={FormScreen} />
-    <Tab.Screen name="Map" component={MapScreen} />
   </Tab.Navigator>
 );
 
