@@ -80,7 +80,7 @@ const useContacts = () => {
       }));
 
       const response = await axios.post(
-        'http://192.168.89.8:4000/api/v1/contacts',
+        'https://closetoyoudeltabackend.onrender.com/api/v1/contacts',
         { contacts: formattedContacts },
         {
           headers: {

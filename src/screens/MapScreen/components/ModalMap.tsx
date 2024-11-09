@@ -1,7 +1,7 @@
 // MapModal.tsx
-import React, { useState } from 'react';
-import { Modal, View, StyleSheet } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import React, {useState} from 'react';
+import {Modal, View, StyleSheet} from 'react-native';
+import MapView, {Marker} from 'react-native-maps';
 import GenericButton from '../../../components/GenericButton';
 
 interface LatLng {
@@ -15,19 +15,20 @@ interface MapModalProps {
   onClose: () => void;
 }
 
-const MapModal: React.FC<MapModalProps> = ({ visible, onSave, onClose }) => {
+const MapModal: React.FC<MapModalProps> = ({visible, onSave, onClose}) => {
   const [selectedLocation, setSelectedLocation] = useState<LatLng | null>(null);
 
-  const handleMapPress = (event: { nativeEvent: { coordinate: LatLng } }) => {
-    const { latitude, longitude } = event.nativeEvent.coordinate;
-    setSelectedLocation({ latitude, longitude });
+  const handleMapPress = (event: {nativeEvent: {coordinate: LatLng}}) => {
+    const {latitude, longitude} = event.nativeEvent.coordinate;
+    console.log('Selected location:', {latitude, longitude}); // Log para verificar la ubicación seleccionada
+    setSelectedLocation({latitude, longitude});
   };
 
-  const handleMarkerDragEnd = (event: { nativeEvent: { coordinate: LatLng } }) => {
-    const { latitude, longitude } = event.nativeEvent.coordinate;
-    setSelectedLocation({ latitude, longitude });
+  const handleMarkerDragEnd = (event: {nativeEvent: {coordinate: LatLng}}) => {
+    const {latitude, longitude} = event.nativeEvent.coordinate;
+    console.log('Dragged to new location:', {latitude, longitude}); // Log para verificar la ubicación después de arrastrar
+    setSelectedLocation({latitude, longitude});
   };
-
   const handleSave = () => {
     if (selectedLocation) {
       onSave(selectedLocation);
@@ -57,8 +58,18 @@ const MapModal: React.FC<MapModalProps> = ({ visible, onSave, onClose }) => {
           )}
         </MapView>
         <View style={styles.modalButtons}>
-          <GenericButton title="Close" onPress={onClose} backgroundColor="#000" width={150} />
-          <GenericButton title="Save" onPress={handleSave} backgroundColor="#000" width={150} />
+          <GenericButton
+            title="Close"
+            onPress={onClose}
+            backgroundColor="#000"
+            width={150}
+          />
+          <GenericButton
+            title="Save"
+            onPress={handleSave}
+            backgroundColor="#000"
+            width={150}
+          />
         </View>
       </View>
     </Modal>

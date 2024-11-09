@@ -45,7 +45,7 @@ const DetailsScreen: React.FC = () => {
   } = useContactDetails(contact.recordID, contact);
 
   const {selectImage, uploading} = useImageUploader({
-    contactId: contactData.recordID,
+    contactId: contactData.recordID ?? '',
     onImageUpload: (photoUrl: string) => (contactData.photo = photoUrl),
     refreshContacts,
   });

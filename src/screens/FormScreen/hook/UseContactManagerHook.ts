@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Alert, Platform } from 'react-native';
 import { Contact } from '../../../interfaces/Contact.interface';
-import { useContacts } from '../../../hooks/asyncStorage';
 import * as ImagePicker from 'react-native-image-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import { createOneContact } from '../../../services/ContactsManager';
+import { useAuth } from '../../../context/AuthContext';
 
 export const useFormContact = () => {
-  const { saveContactToStorage } = useContacts();
+  const { token } = useAuth();
 
   const [form, setForm] = useState<Contact>({
     name: '',
@@ -15,6 +15,8 @@ export const useFormContact = () => {
     email: '',
     role: null,
     photo: null,
+    latitude: null,
+    longitude: null,
   });
 
   const resetForm = () => {
@@ -24,10 +26,12 @@ export const useFormContact = () => {
       email: '',
       role: null,
       photo: null,
+      latitude: null,
+      longitude: null,
     });
   };
 
-  const handleChange = (key: keyof Contact, value: string | null) => {
+  const handleChange = (key: keyof Contact, value: string | number | null) => {
     setForm(prevForm => ({ ...prevForm, [key]: value }));
   };
 
@@ -39,13 +43,52 @@ export const useFormContact = () => {
     return true;
   };
 
+  // New logic to handle saving location coordinates
+  const handleSaveLocation = (latitude: number, longitude: number) => {
+    handleChange('latitude', latitude);  // Store latitude as number
+    handleChange('longitude', longitude); // Store longitude as number
+    console.log('Coordinates saved:', { latitude, longitude });
+    Alert.alert('Location Saved', 'Your location has been saved successfully!');
+  };
+
   const handleSubmit = async () => {
     if (!validateForm()) {
       return;
     }
 
     try {
-      await saveContactToStorage(form);
+      if (!token) {
+        Alert.alert('Authentication Error', 'User not authenticated.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('name', form.name);
+      formData.append('phone', form.phone);
+      formData.append('email', form.email);
+      formData.append('role', form.role || '');
+      if (
+        form.latitude !== null &&
+        form.latitude !== undefined &&
+        form.longitude !== null &&
+        form.longitude !== undefined
+      ) {
+        formData.append('latitude', Number(form.latitude).toString());
+        formData.append('longitude', Number(form.longitude).toString());
+        console.log(form.latitude, form.longitude);
+      }
+
+      if (form.photo) {
+        formData.append('photo', {
+          uri: form.photo,
+          name: 'contact_photo.jpg',
+          type: 'image/jpeg',
+        });
+      }
+
+      const savedContact = await createOneContact(token, formData);
+      console.log('Contact saved on server:', savedContact);
+
       resetForm();
       Alert.alert('Success', 'Contact saved successfully!');
     } catch (error) {
@@ -57,7 +100,7 @@ export const useFormContact = () => {
   const selectImage = () => {
     ImagePicker.launchImageLibrary(
       { mediaType: 'photo', quality: 1 },
-      (response: ImagePicker.ImagePickerResponse) => {
+      response => {
         if (response.didCancel) {
           return;
         }
@@ -94,13 +137,15 @@ export const useFormContact = () => {
           return;
         }
         if (result.errorCode) {
-          Alert.alert('Camera Error', result.errorMessage || 'Failed to launch camera');
+          Alert.alert(
+            'Camera Error',
+            result.errorMessage || 'Failed to launch camera',
+          );
           return;
         }
         if (result.assets && result.assets.length > 0) {
           const uri = result.assets[0].uri ?? null;
           handleChange('photo', uri);
-          await saveImageURI(uri);
         } else {
           Alert.alert('Error', 'No image was captured');
         }
@@ -110,16 +155,6 @@ export const useFormContact = () => {
     } catch (error) {
       console.error('Failed to request camera permission', error);
       Alert.alert('Error', 'Failed to request camera permission');
-    }
-  };
-
-  const saveImageURI = async (uri: string | null) => {
-    try {
-      if (uri) {
-        await AsyncStorage.setItem('savedImage', uri);
-      }
-    } catch (error) {
-      console.error('Failed to save image URI to storage', error);
     }
   };
 
@@ -141,5 +176,6 @@ export const useFormContact = () => {
     selectImage,
     takePhoto,
     resetForm,
+    handleSaveLocation,
   };
 };

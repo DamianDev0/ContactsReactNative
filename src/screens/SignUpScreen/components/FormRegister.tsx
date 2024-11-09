@@ -94,11 +94,12 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   logoImage: {
-    width: 390,
-    height: 395,
+    width: 430,
+    height: 375,
     position: 'absolute',
-    top: 10,
+    top: 0,
     zIndex: 2,
+
   },
   formContainer: {
     justifyContent: 'center',
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     width: width * 0.9,
-    height: 500,
+    height: 550,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 5},
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     padding: 30,
     elevation: 8,
-    marginTop: 100,
+    marginTop: 70,
   },
   errorText: {
     color: '#a93226',
