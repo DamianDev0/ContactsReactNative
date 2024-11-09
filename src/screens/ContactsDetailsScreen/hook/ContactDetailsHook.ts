@@ -142,7 +142,7 @@ export const useContactDetails = (
       name: string;
       phone: string;
       email: string;
-      latitude: number;
+      latitude: number ;
       longitude: number;
     },
     refreshContacts: Function,

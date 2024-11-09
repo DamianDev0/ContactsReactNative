@@ -116,8 +116,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   logoImage: {
-    width: 370,
-    height: 385,
+    width: 420,
+    height: 355,
     position: 'absolute',
     top: 10,
     zIndex: 2,

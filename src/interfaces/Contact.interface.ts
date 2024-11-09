@@ -1,6 +1,6 @@
 export interface Contact {
-  recordID: string;
-  displayName: string | null | undefined;
+  recordID?: string;
+  displayName?: string | null | undefined;
   name?: string | null;
   phone?: string | null;
   email?: string | null;

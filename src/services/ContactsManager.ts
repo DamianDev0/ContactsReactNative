@@ -2,13 +2,15 @@ import axios from 'axios';
 import {Contact} from '../interfaces/Contact.interface';
 import {ApiResponse} from '../types/apiresponse';
 
-const API_URL = 'http://192.168.89.8:4000/api/v1/contacts';
+const API_URL = 'https://closetoyoudeltabackend.onrender.com/api/v1/contacts';
 
 const getContactById = async (
   recordID: string,
   token: string,
 ): Promise<ApiResponse> => {
-  if (!token) {throw new Error('No token found, user is not authenticated.');}
+  if (!token) {
+    throw new Error('No token found, user is not authenticated.');
+  }
   const response = await axios.get(`${API_URL}/${recordID}`, {
     headers: {Authorization: `Bearer ${token}`},
   });
@@ -27,7 +29,9 @@ const updateContactById = async (
   updateData: FormData | Partial<Contact>,
   token: string,
 ): Promise<ApiResponse<Contact>> => {
-  if (!token) {throw new Error('No token found, user is not authenticated.');}
+  if (!token) {
+    throw new Error('No token found, user is not authenticated.');
+  }
   const headers = {
     Authorization: `Bearer ${token}`,
     'Content-Type':
@@ -45,10 +49,31 @@ const deleteContactById = async (
   recordID: string,
   token: string,
 ): Promise<void> => {
-  if (!token) {throw new Error('No token found, user is not authenticated.');}
+  if (!token) {
+    throw new Error('No token found, user is not authenticated.');
+  }
   await axios.delete(`${API_URL}/${recordID}`, {
     headers: {Authorization: `Bearer ${token}`},
   });
 };
 
-export {getContactById, getAllContacts, updateContactById, deleteContactById};
+const createOneContact = async (
+  token: string,
+  newContactData: FormData
+): Promise<Contact> => {
+  if (!token) {
+    throw new Error('No token found, user is not authenticated.');
+  }
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'multipart/form-data',
+  };
+
+  const response = await axios.post(`${API_URL}/oneContact`, newContactData, {
+    headers,
+  });
+
+  return response.data.data;
+};
+export {getContactById, getAllContacts, updateContactById, deleteContactById, createOneContact};
