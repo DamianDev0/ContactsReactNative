@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { Alert, Platform } from 'react-native';
-import { Contact } from '../../../interfaces/Contact.interface';
+import {useState} from 'react';
+import {Alert, Platform} from 'react-native';
+import {Contact} from '../../../interfaces/Contact.interface';
 import * as ImagePicker from 'react-native-image-picker';
-import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import { createOneContact } from '../../../services/ContactsManager';
-import { useAuth } from '../../../context/AuthContext';
+import {request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {createOneContact} from '../../../services/ContactsManager';
+import {useAuth} from '../../../context/AuthContext';
 
 export const useFormContact = () => {
-  const { token } = useAuth();
+  const {token} = useAuth();
 
   const [form, setForm] = useState<Contact>({
     name: '',
@@ -18,6 +18,8 @@ export const useFormContact = () => {
     latitude: null,
     longitude: null,
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);  // Estado para controlar si se está enviando la solicitud
 
   const resetForm = () => {
     setForm({
@@ -32,7 +34,7 @@ export const useFormContact = () => {
   };
 
   const handleChange = (key: keyof Contact, value: string | number | null) => {
-    setForm(prevForm => ({ ...prevForm, [key]: value }));
+    setForm(prevForm => ({...prevForm, [key]: value}));
   };
 
   const validateForm = () => {
@@ -43,18 +45,23 @@ export const useFormContact = () => {
     return true;
   };
 
-  // New logic to handle saving location coordinates
-  const handleSaveLocation = (latitude: number, longitude: number) => {
-    handleChange('latitude', latitude);  // Store latitude as number
-    handleChange('longitude', longitude); // Store longitude as number
-    console.log('Coordinates saved:', { latitude, longitude });
+  const handleSaveLocation = (
+    latitude: number,
+    longitude: number,
+    setModalVisible: React.Dispatch<React.SetStateAction<boolean>>,
+  ) => {
+    handleChange('latitude', latitude);
+    handleChange('longitude', longitude);
     Alert.alert('Location Saved', 'Your location has been saved successfully!');
+    setModalVisible(false);
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) {
+    if (!validateForm() || isSubmitting) {  // Verifica si ya se está enviando
       return;
     }
+
+    setIsSubmitting(true);  // Inicia el proceso de envío
 
     try {
       if (!token) {
@@ -75,7 +82,6 @@ export const useFormContact = () => {
       ) {
         formData.append('latitude', Number(form.latitude).toString());
         formData.append('longitude', Number(form.longitude).toString());
-        console.log(form.latitude, form.longitude);
       }
 
       if (form.photo) {
@@ -94,12 +100,14 @@ export const useFormContact = () => {
     } catch (error) {
       console.error('Error saving contact:', error);
       Alert.alert('Error', 'Failed to save contact');
+    } finally {
+      setIsSubmitting(false);  // Termina el proceso de envío
     }
   };
 
   const selectImage = () => {
     ImagePicker.launchImageLibrary(
-      { mediaType: 'photo', quality: 1 },
+      {mediaType: 'photo', quality: 1},
       response => {
         if (response.didCancel) {
           return;
@@ -177,5 +185,6 @@ export const useFormContact = () => {
     takePhoto,
     resetForm,
     handleSaveLocation,
+    isSubmitting,  // Incluye isSubmitting en el retorno para usarlo en el botón de guardado
   };
 };

@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import InputGeneric from '../../../components/GenericInput';
-import { FormInputsProps } from '../../../types/typesFormComponent';
+import {FormInputsProps} from '../../../types/typesFormComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import RolePicker from './rolePicker';
 
 const FormInputs: React.FC<FormInputsProps> = ({
   form,
@@ -39,14 +40,10 @@ const FormInputs: React.FC<FormInputsProps> = ({
         height={45}
         icon="envelope"
       />
-      <InputGeneric
-        placeholder="Role"
-        value={form.role || ''}
-        onChangeText={text => handleChange('role', text)}
-        width={310}
-        marginBottom={15}
-        height={45}
-         icon="briefcase"
+
+      <RolePicker
+        role={form.role || ''}
+        setRole={value => handleChange('role', value)}
       />
 
       <View style={styles.containerButtons}>

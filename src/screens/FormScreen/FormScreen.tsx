@@ -23,6 +23,7 @@ const FormScreen: React.FC = () => {
     selectImage,
     takePhoto,
     handleSaveLocation,
+    isSubmitting,
   } = useFormContact();
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
@@ -66,6 +67,7 @@ const FormScreen: React.FC = () => {
               color="#FFF"
               onPress={onSubmit}
               style={styles.iconButton}
+              disabled={isSubmitting} 
             />
             <Icon
               name="times"
@@ -84,10 +86,12 @@ const FormScreen: React.FC = () => {
           </View>
         </View>
         <MapModal
-          visible={isModalVisible}
-          onClose={() => setModalVisible(false)}
-          onSave={handleSaveLocation}
-        />
+        visible={isModalVisible}
+        onClose={() => setModalVisible(false)}
+        onSave={(latitude, longitude) => {
+          handleSaveLocation(latitude, longitude, setModalVisible);
+        }}
+      />
       </View>
   );
 };

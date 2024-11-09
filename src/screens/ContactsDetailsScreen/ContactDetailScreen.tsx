@@ -18,7 +18,7 @@ import Loader from '../../components/Loader';
 import EditModal from './components/EditModal';
 import CustomToast from '../../components/CustomToast';
 import ActionButtons from './components/ActionButtons';
-import WeatherImage from './components/WeatherImage';
+import WeatherImage from '../../components/WeatherImage';
 import DeleteModal from './components/DeleteModal';
 import useImageUploader from './hook/useImage';
 

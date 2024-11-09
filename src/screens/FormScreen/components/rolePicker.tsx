@@ -2,23 +2,27 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 
-interface TransportModePickerProps {
-  transportMode: string;
-  setTransportMode: (value: string) => void;
+interface RolePickerProps {
+  role: string;
+  setRole: (value: string) => void;
 }
 
-const TransportModePicker: React.FC<TransportModePickerProps> = ({ transportMode, setTransportMode }) => {
+const RolePicker: React.FC<RolePickerProps> = ({ role, setRole }) => {
   return (
     <View style={styles.pickerContainer}>
       <RNPickerSelect
-        onValueChange={setTransportMode}
+        onValueChange={setRole}
         items={[
-          { label: 'Carro', value: 'driving' },
-          { label: 'Motocicleta', value: 'motorcycle' },
-          { label: 'Caminando', value: 'walking' },
+          { label: 'CUSTOMER', value: 'CUSTOMER' },
+          { label: 'FRIEND', value: 'FRIEND' },
         ]}
         style={pickerSelectStyles}
-        value={transportMode}
+        value={role}
+        placeholder={{
+          label: 'Role...',
+          value: null,
+          color: 'black',
+        }}
       />
     </View>
   );
@@ -26,16 +30,18 @@ const TransportModePicker: React.FC<TransportModePickerProps> = ({ transportMode
 
 const styles = StyleSheet.create({
   pickerContainer: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    right: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    position: 'relative',
+    marginBottom: 15,
+    backgroundColor: '#FFF',
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#ccc',
+    right: 80,
     zIndex: 1,
-    padding: 4,
+    padding: 2,
+    width: 150,
+    height: 45,
+    alignItems: 'flex-start',
   },
 });
 
@@ -54,8 +60,12 @@ const pickerSelectStyles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 8,
     color: 'black',
-    paddingRight: 30,
+    paddingRight: 40,
+    justifyContent: 'flex-end',
+  },
+  placeholder: {
+    color: '#515a5a',  
   },
 });
 
-export default TransportModePicker;
+export default RolePicker;
