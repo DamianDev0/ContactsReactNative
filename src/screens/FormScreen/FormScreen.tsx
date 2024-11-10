@@ -1,19 +1,12 @@
-import React, { useState } from 'react';
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  Alert,
-} from 'react-native';
-import { useFormContact } from './hook/UseContactManagerHook';
-import { useNavigation } from '@react-navigation/native';
+import React, {useState} from 'react';
+import {Dimensions, Image, StyleSheet, Text, View, Alert} from 'react-native';
+import {useFormContact} from './hook/UseContactManagerHook';
+import {useNavigation} from '@react-navigation/native';
 import FormInputs from './components/FormInputs';
 import MapModal from './components/MapModal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const { width } = Dimensions.get('screen');
+const {width} = Dimensions.get('screen');
 
 const FormScreen: React.FC = () => {
   const {
@@ -39,60 +32,60 @@ const FormScreen: React.FC = () => {
   };
 
   return (
-      <View style={styles.container}>
-        <View style={styles.containerAnimation}>
-          <Image
-            source={require('../../assets/img/Stylizedoutfit.png')}
-            style={styles.image}
+    <View style={styles.container}>
+      <View style={styles.containerAnimation}>
+        <Image
+          source={require('../../assets/img/Stylizedoutfit.png')}
+          style={styles.image}
+        />
+      </View>
+      <View style={styles.containerForm}>
+        <Text style={styles.title}>New Contact</Text>
+        <FormInputs
+          form={{
+            name: form.name || '',
+            phone: form.phone || '',
+            email: form.email || '',
+            role: form.role || '',
+            photo: form.photo || '',
+          }}
+          handleChange={handleChange}
+          selectImage={selectImage}
+          takePhoto={takePhoto}
+        />
+        <View style={styles.containerButtons}>
+          <Icon
+            name="check"
+            size={30}
+            color="#FFF"
+            onPress={onSubmit}
+            style={styles.iconButton}
+            disabled={isSubmitting}
+          />
+          <Icon
+            name="times"
+            size={30}
+            color="#FFF"
+            onPress={() => navigation.goBack()}
+            style={styles.iconButton}
+          />
+          <Icon
+            name="map-marker"
+            size={30}
+            color="#FFF"
+            onPress={() => setModalVisible(true)}
+            style={styles.iconButton}
           />
         </View>
-        <View style={styles.containerForm}>
-          <Text style={styles.title}>New Contact</Text>
-          <FormInputs
-            form={{
-              name: form.name || '',
-              phone: form.phone || '',
-              email: form.email || '',
-              role: form.role || '',
-              photo: form.photo || '',
-            }}
-            handleChange={handleChange}
-            selectImage={selectImage}
-            takePhoto={takePhoto}
-          />
-          <View style={styles.containerButtons}>
-            <Icon
-              name="check"
-              size={30}
-              color="#FFF"
-              onPress={onSubmit}
-              style={styles.iconButton}
-              disabled={isSubmitting} 
-            />
-            <Icon
-              name="times"
-              size={30}
-              color="#FFF"
-              onPress={() => navigation.goBack()}
-              style={styles.iconButton}
-            />
-            <Icon
-              name="map-marker"
-              size={30}
-              color="#FFF"
-              onPress={() => setModalVisible(true)}
-              style={styles.iconButton}
-            />
-          </View>
-        </View>
-        <MapModal
+      </View>
+      <MapModal
         visible={isModalVisible}
         onClose={() => setModalVisible(false)}
         onSave={(latitude, longitude) => {
           handleSaveLocation(latitude, longitude, setModalVisible);
         }}
       />
-      </View>
+    </View>
   );
 };
 

@@ -1,4 +1,4 @@
-package com.contactswithtailwind
+package com.closetoyoudeltadamian.www
 
 import android.app.Application
 import com.facebook.react.PackageList

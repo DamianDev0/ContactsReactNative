@@ -79,9 +79,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.contactswithtailwind"
+    namespace "com.closetoyoudeltadamian.www"
     defaultConfig {
-        applicationId "com.contactswithtailwind"
+        applicationId "com.closetoyoudeltadamian.www"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

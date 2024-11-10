@@ -94,10 +94,10 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   logoImage: {
-    width: 430,
-    height: 375,
+    width: width * 0.9,
+    height: height * 0.4,
     position: 'absolute',
-    top: 0,
+    top: 15,
     zIndex: 2,
 
   },
