@@ -16,13 +16,18 @@ import {RootStackParamList} from '../../../types/navigation.types';
 interface ContactListProps {
   contacts: Contact[];
   loading: boolean;
+  loadMoreContacts: () => void;
 }
 
 const {width} = Dimensions.get('screen');
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
 
-const ContactList: React.FC<ContactListProps> = ({contacts, loading}) => {
+const ContactList: React.FC<ContactListProps> = ({
+  contacts,
+  loading,
+  loadMoreContacts,
+}) => {
   const navigation = useNavigation<NavigationProp>();
 
   const sections = useMemo(() => {
@@ -48,7 +53,7 @@ const ContactList: React.FC<ContactListProps> = ({contacts, loading}) => {
   };
 
   const renderItem = ({item}: {item: Contact}) => (
-    <CardContact item={item} onPress={handleContactPress} />
+    <CardContact item={item} onPress={() => handleContactPress(item)} />
   );
 
   const renderSectionHeader = ({
@@ -57,18 +62,31 @@ const ContactList: React.FC<ContactListProps> = ({contacts, loading}) => {
     section: {title: string};
   }) => <Text style={styles.sectionHeader}>{title}</Text>;
 
-  if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
-  }
+  const handleEndReached = () => {
+    if (!loading && contacts.length >= 5) {
+      loadMoreContacts();
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <SectionList
-        sections={sections}
-        keyExtractor={item => item.recordID.toString()}
-        renderItem={renderItem}
-        renderSectionHeader={renderSectionHeader}
-      />
+      {loading && contacts.length === 0 ? (
+        <ActivityIndicator size="large" color="#000" />
+      ) : (
+        <SectionList
+          sections={sections}
+          keyExtractor={(item, index) =>
+            `${item.recordID ?? 'unknown'}-${index}`
+          }
+          renderItem={renderItem}
+          renderSectionHeader={renderSectionHeader}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.1}
+          ListFooterComponent={
+            loading ? <ActivityIndicator size="small" color="#000" /> : null
+          }
+        />
+      )}
     </View>
   );
 };
@@ -78,15 +96,16 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     width: width * 0.9,
+    alignSelf: 'center',
   },
   sectionHeader: {
     fontSize: 20,
     fontWeight: 'bold',
-    backgroundColor: '#0000',
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginVertical: 5,
     borderRadius: 4,
+    backgroundColor: '#f0f0f0',
   },
 });
 

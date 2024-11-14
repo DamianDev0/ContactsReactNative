@@ -185,6 +185,6 @@ export const useFormContact = () => {
     takePhoto,
     resetForm,
     handleSaveLocation,
-    isSubmitting,  // Incluye isSubmitting en el retorno para usarlo en el botón de guardado
+    isSubmitting,
   };
 };

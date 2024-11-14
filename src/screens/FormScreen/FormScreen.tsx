@@ -6,7 +6,7 @@ import FormInputs from './components/FormInputs';
 import MapModal from './components/MapModal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const {width} = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
 const FormScreen: React.FC = () => {
   const {
@@ -105,9 +105,9 @@ const styles = StyleSheet.create({
   containerForm: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 360,
+    width: width * 0.9,
     padding: 20,
-    height: 520,
+    height: height * 0.61,
     backgroundColor: '#000',
     borderRadius: 10,
     marginTop: 150,
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   containerButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    width: '100%',
+    width: width * 0.9,
     marginTop: 20,
   },
   image: {

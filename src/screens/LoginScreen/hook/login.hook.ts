@@ -1,17 +1,18 @@
 import {useState, useEffect} from 'react';
 import {useAuth} from '../../../context/AuthContext';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, NavigationProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../../types/navigation.types';
 
 const useLogin = () => {
-  const {login, loading, errorMessage} = useAuth();
-  const navigation = useNavigation<RootStackParamList>();
+  const {login, loading, errorMessage, isAuthenticated} = useAuth();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     if (email && password) {
       await login(email, password);
+      navigation.navigate('Main');
       return;
     }
   };
@@ -21,10 +22,10 @@ const useLogin = () => {
   };
 
   useEffect(() => {
-    if (!loading && !errorMessage) {
+    if (isAuthenticated && !loading && !errorMessage) {
       navigation.navigate('Main');
     }
-  }, [loading, errorMessage, navigation]);
+  }, [isAuthenticated, loading, errorMessage, navigation]);
 
   return {
     email,
@@ -34,7 +35,6 @@ const useLogin = () => {
     handleLogin,
     loading,
     errorMessage,
-    navigation,
     handleSignUpNavigation,
   };
 };

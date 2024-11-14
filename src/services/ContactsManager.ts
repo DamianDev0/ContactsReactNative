@@ -17,12 +17,27 @@ const getContactById = async (
   return response.data;
 };
 
-const getAllContacts = async (token: string): Promise<Contact[]> => {
-  const response = await axios.get(API_URL, {
-    headers: {Authorization: `Bearer ${token}`},
-  });
-  return response.data.data;
+const getAllContacts = async (
+  token: string,
+  page: number,
+  limit: number,
+): Promise<Contact[]> => {
+  try {
+    const response = await axios.get(`${API_URL}/pagination/${page}/${limit}`, {
+      headers: {Authorization: `Bearer ${token}`},
+    });
+
+    if (Array.isArray(response.data.data.data)) {
+      return response.data.data.data;
+    } else {
+      throw new Error('Data is not an array');
+    }
+  } catch (error) {
+    console.error('Error fetching contacts:', error);
+    throw new Error('Failed to fetch contacts');
+  }
 };
+
 
 const updateContactById = async (
   recordID: string,
@@ -59,7 +74,7 @@ const deleteContactById = async (
 
 const createOneContact = async (
   token: string,
-  newContactData: FormData
+  newContactData: FormData,
 ): Promise<Contact> => {
   if (!token) {
     throw new Error('No token found, user is not authenticated.');
@@ -76,4 +91,10 @@ const createOneContact = async (
 
   return response.data.data;
 };
-export {getContactById, getAllContacts, updateContactById, deleteContactById, createOneContact};
+export {
+  getContactById,
+  getAllContacts,
+  updateContactById,
+  deleteContactById,
+  createOneContact,
+};

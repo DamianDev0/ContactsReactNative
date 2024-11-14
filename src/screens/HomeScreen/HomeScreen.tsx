@@ -1,14 +1,13 @@
-import React, {useCallback} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, { useCallback } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import ContactList from './components/ContactList';
 import LogoutButton from './components/LogoutButton';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import useContacts from './hook/useContacts';
 import Loader from '../../components/Loader';
 
 const HomeScreen = () => {
-  const {contacts, loading, refreshContacts} = useContacts();
-
+  const { contacts, loading, refreshContacts, loadMoreContacts } = useContacts();
   useFocusEffect(
     useCallback(() => {
       refreshContacts();
@@ -20,10 +19,15 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <LogoutButton />
       <Text style={styles.header}>Contacts</Text>
-      {loading ? (
+      {/* Muestra el Loader durante la primera carga */}
+      {loading && contacts.length === 0 ? (
         <Loader />
       ) : (
-        <ContactList contacts={contacts} loading={loading} />
+        <ContactList
+          contacts={contacts}
+          loading={loading}
+          loadMoreContacts={loadMoreContacts}
+        />
       )}
     </View>
   );
@@ -47,6 +51,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
-
 
 export default HomeScreen;
