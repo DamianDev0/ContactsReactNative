@@ -11,7 +11,7 @@ const useContacts = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
-  const [limit] = useState<number>(10);
+  const [limit] = useState<number>(5);
   const { token } = useAuth();
 
   const requestContactsPermission = async (): Promise<boolean> => {
@@ -55,7 +55,7 @@ const useContacts = () => {
       }
 
       const apiContacts = await getAllContacts(token ?? '', page, limit);
-      setContacts(prevContacts => [...prevContacts, ...apiContacts]);
+      setContacts(prevContacts => (page === 1 ? apiContacts : [...prevContacts, ...apiContacts]));
     } catch (error) {
       console.error('Failed to load contacts:', error);
       Alert.alert('Error', 'Failed to load contacts.');
@@ -88,7 +88,6 @@ const useContacts = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        Alert.alert('Success', 'Contacts successfully sent to the backend.');
         await AsyncStorage.setItem('contactsSent', 'true');
       } else {
         throw new Error('Failed to send contacts');
@@ -100,15 +99,8 @@ const useContacts = () => {
   };
 
   const refreshContacts = async () => {
-    setLoading(true);
-    try {
-      const apiContacts = await getAllContacts(token ?? '', 1, 10);
-      setContacts(apiContacts);
-    } catch (error) {
-      console.error('Failed to refresh contacts:', error);
-    } finally {
-      setLoading(false);
-    }
+    setPage(1);
+    await loadContacts();
   };
 
   useEffect(() => {

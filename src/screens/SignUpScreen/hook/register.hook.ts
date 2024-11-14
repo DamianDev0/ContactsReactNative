@@ -12,6 +12,7 @@ const useRegister = () => {
   const handleRegister = async () => {
     if (email && password) {
       await signUp(email, password);
+      navigation.goBack();
     } else {
       console.log('Please enter both email and password.');
     }

@@ -24,15 +24,13 @@ const {width} = Dimensions.get('screen');
 type NavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
 
 const ContactList: React.FC<ContactListProps> = ({
-  contacts = [],
+  contacts,
   loading,
   loadMoreContacts,
 }) => {
   const navigation = useNavigation<NavigationProp>();
 
   const sections = useMemo(() => {
-    if (!Array.isArray(contacts)) {return [];}
-
     const groupedContacts = contacts.reduce((acc, contact) => {
       const firstLetter = contact.name?.charAt(0).toUpperCase() || '#';
       if (!acc[firstLetter]) {
@@ -65,7 +63,7 @@ const ContactList: React.FC<ContactListProps> = ({
   }) => <Text style={styles.sectionHeader}>{title}</Text>;
 
   const handleEndReached = () => {
-    if (!loading) {
+    if (!loading && contacts.length >= 5) {
       loadMoreContacts();
     }
   };
@@ -77,11 +75,13 @@ const ContactList: React.FC<ContactListProps> = ({
       ) : (
         <SectionList
           sections={sections}
-          keyExtractor={item => item.recordID?.toString() || 'unknown'}
+          keyExtractor={(item, index) =>
+            `${item.recordID ?? 'unknown'}-${index}`
+          }
           renderItem={renderItem}
           renderSectionHeader={renderSectionHeader}
           onEndReached={handleEndReached}
-          onEndReachedThreshold={0.3}
+          onEndReachedThreshold={0.1}
           ListFooterComponent={
             loading ? <ActivityIndicator size="small" color="#000" /> : null
           }
@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginVertical: 5,
     borderRadius: 4,
+    backgroundColor: '#f0f0f0',
   },
 });
 
