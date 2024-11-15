@@ -11,7 +11,7 @@ const useContacts = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
-  const [limit] = useState<number>(5);
+  const [limit] = useState<number>(15);
   const { token } = useAuth();
 
   const requestContactsPermission = async (): Promise<boolean> => {

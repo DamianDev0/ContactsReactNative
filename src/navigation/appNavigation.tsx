@@ -1,3 +1,4 @@
+// AppNavigation.tsx
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -12,14 +13,14 @@ import TabBarIcon from './TabBarIcon';
 import LoginScreen from '../screens/LoginScreen/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen/SignUpScreen';
 import Loader from '../components/Loader';
+import { RootStackParamList } from '../types/navigation.types';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
 
 const MyTabs = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
-      // eslint-disable-next-line react/no-unstable-nested-components
       tabBarIcon: ({ color, size }) => (
         <TabBarIcon routeName={route.name} color={color} size={size} />
       ),
@@ -60,9 +61,14 @@ const AppNavigation = () => {
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName={
-          isFirstLaunch ? 'Onboarding' : isAuthenticated ? 'Main' : 'Login'
+          isAuthenticated
+            ? 'Main' // La pantalla 'Main' es la que se muestra si está autenticado
+            : isFirstLaunch
+            ? 'Onboarding'
+            : 'Login'
         }>
-        {isFirstLaunch && (
+        
+        {isFirstLaunch && !isAuthenticated && (
           <Stack.Screen
             name="Onboarding"
             component={OnboardingScreen}
@@ -74,7 +80,7 @@ const AppNavigation = () => {
           <>
             <Stack.Screen
               name="Main"
-              component={MyTabs}
+              component={MyTabs} // MyTabs es el contenedor de las pestañas
               options={{ headerShown: false }}
             />
             <Stack.Screen
