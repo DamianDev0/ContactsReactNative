@@ -12,11 +12,12 @@ const useLogin = () => {
   const handleLogin = async () => {
     if (email && password) {
       await login(email, password);
-      navigation.navigate('Main');
+      if (isAuthenticated) {
+        navigation.navigate('Main');
+      }
       return;
     }
   };
-
   const handleSignUpNavigation = () => {
     navigation.navigate('Signup');
   };
