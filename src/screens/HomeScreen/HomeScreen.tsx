@@ -1,13 +1,26 @@
-import React, { useCallback } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import ContactList from './components/ContactList';
-import LogoutButton from './components/LogoutButton';
-import { useFocusEffect } from '@react-navigation/native';
+import React, {useCallback, useState} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import useContacts from './hook/useContacts';
 import Loader from '../../components/Loader';
+import ContactList from './components/ContactList';
+import LogoutButton from './components/LogoutButton';
+import SearchFilter from './components/SearchFiltered';
+import useFilteredContacts from './hook/useFilteredContacts';
 
 const HomeScreen = () => {
-  const { contacts, loading, refreshContacts, loadMoreContacts } = useContacts();
+  const {contacts, loading, refreshContacts, loadMoreContacts} = useContacts();
+  const [searchText, setSearchText] = useState('');
+  const [searchType, setSearchType] = useState<'name' | 'email' | 'phone'>(
+    'name',
+  );
+
+  const filteredContacts = useFilteredContacts(
+    contacts,
+    searchText,
+    searchType,
+  );
+
   useFocusEffect(
     useCallback(() => {
       refreshContacts();
@@ -19,12 +32,17 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <LogoutButton />
       <Text style={styles.header}>Contacts</Text>
-      {/* Muestra el Loader durante la primera carga */}
+      <SearchFilter
+        searchText={searchText}
+        setSearchText={setSearchText}
+        searchType={searchType}
+        setSearchType={setSearchType}
+      />
       {loading && contacts.length === 0 ? (
         <Loader />
       ) : (
         <ContactList
-          contacts={contacts}
+          contacts={filteredContacts}
           loading={loading}
           loadMoreContacts={loadMoreContacts}
         />

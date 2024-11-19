@@ -38,7 +38,6 @@ const getAllContacts = async (
   }
 };
 
-
 const updateContactById = async (
   recordID: string,
   updateData: FormData | Partial<Contact>,
@@ -91,10 +90,40 @@ const createOneContact = async (
 
   return response.data.data;
 };
+
+const getFilteredContacts = async (
+  token: string,
+  searchText: string,
+  searchType: 'name' | 'email' | 'phone',
+  page: number,
+  limit: number,
+): Promise<Contact[]> => {
+  try {
+    const response = await axios.get(`${API_URL}/filter`, {
+      headers: {Authorization: `Bearer ${token}`},
+      params: {
+        [searchType]: searchText,
+        page: page,
+        limit: limit,
+      },
+    });
+
+    if (Array.isArray(response.data.data)) {
+      return response.data.data;
+    } else {
+      throw new Error('Data is not an array');
+    }
+  } catch (error) {
+    console.error('Error fetching filtered contacts:', error);
+    throw new Error('Failed to fetch filtered contacts');
+  }
+};
+
 export {
   getContactById,
   getAllContacts,
   updateContactById,
   deleteContactById,
   createOneContact,
+  getFilteredContacts,
 };

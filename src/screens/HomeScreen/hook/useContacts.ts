@@ -12,6 +12,10 @@ const useContacts = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(15);
+  const [searchText, setSearchText] = useState<string>('');
+  const [searchType, setSearchType] = useState<'name' | 'email' | 'phone'>(
+    'name',
+  );
   const {token} = useAuth();
 
   const requestContactsPermission = async (): Promise<boolean> => {
@@ -95,8 +99,28 @@ const useContacts = () => {
       }
 
       const apiContacts = await getAllContacts(token ?? '', page, limit);
+
+      const filteredContacts = searchText
+        ? apiContacts.filter(contact => {
+            if (searchType === 'name') {
+              return contact.displayName
+                ?.toLowerCase()
+                .includes(searchText.toLowerCase());
+            } else if (searchType === 'email') {
+              return contact.email
+                ?.toLowerCase()
+                .includes(searchText.toLowerCase());
+            } else if (searchType === 'phone') {
+              return contact.phone
+                ?.toLowerCase()
+                .includes(searchText.toLowerCase());
+            }
+            return true;
+          })
+        : apiContacts;
+
       setContacts(prevContacts =>
-        page === 1 ? apiContacts : [...prevContacts, ...apiContacts],
+        page === 1 ? filteredContacts : [...prevContacts, ...filteredContacts],
       );
     } catch (error) {
       console.error('Failed to load contacts:', error);
@@ -104,8 +128,8 @@ const useContacts = () => {
     } finally {
       setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, token, limit]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, token, limit, searchText, searchType]);
 
   const loadMoreContacts = () => {
     setPage(prevPage => prevPage + 1);
@@ -120,7 +144,16 @@ const useContacts = () => {
     loadContacts();
   }, [loadContacts]);
 
-  return {contacts, loading, loadMoreContacts, refreshContacts};
+  return {
+    contacts,
+    loading,
+    loadMoreContacts,
+    refreshContacts,
+    searchText,
+    setSearchText,
+    searchType,
+    setSearchType,
+  };
 };
 
 export default useContacts;
