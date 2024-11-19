@@ -12,13 +12,10 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({ routeName, color, size }) => {
 
   switch (routeName) {
     case 'Home':
-      iconName = 'home-outline';
+      iconName = 'people-outline';
       break;
     case 'Form':
-      iconName = 'create-outline';
-      break;
-    case 'Map':
-      iconName = 'map-outline';
+      iconName = 'person-add-outline';
       break;
     default:
       iconName = 'alert-circle-outline';
