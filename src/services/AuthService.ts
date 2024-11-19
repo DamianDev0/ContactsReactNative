@@ -1,10 +1,7 @@
 import axios from 'axios';
 import {LoginResponse, RegisterResponse} from '../types/authtypes';
-import {BACKEND_URL} from '@env';
 
-const API_URL = `${BACKEND_URL}/auth`;
-
-console.log('Backend URL:', BACKEND_URL);
+const API_URL = 'https://closetoyoudeltabackend.onrender.com/api/v1/auth';
 
 const apiService = {
   login: async (email: string, password: string): Promise<LoginResponse> => {

@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect,
-} from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiService from '../services/AuthService';
 import CustomToast from '../components/CustomToast';
@@ -25,11 +19,9 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthContext = createContext<AuthContextProps | undefined>(
-  undefined,
-);
+export const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-export const AuthProvider = ({children}: AuthProviderProps) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -46,7 +38,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
   const loadStoredToken = async () => {
     const storedToken = await AsyncStorage.getItem('token');
     const storedUserId = await AsyncStorage.getItem('userId');
-
+    
     if (storedToken && storedUserId) {
       setToken(storedToken);
       setUserId(storedUserId);
@@ -62,7 +54,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     resetMessages();
 
     try {
-      const {data} = await apiService.login(email, password);
+      const { data } = await apiService.login(email, password);
       handleLoginSuccess(data);
     } catch (error: any) {
       handleError(error.message);
@@ -73,7 +65,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 
   // Function to handle successful login
   const handleLoginSuccess = (data: any) => {
-    const {accessToken, id} = data;
+    const { accessToken, id } = data;
     if (accessToken) {
       storeToken(accessToken, id);
       setSuccessMessage('Login successful! Welcome back!');
@@ -98,9 +90,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 
     try {
       await apiService.register(email, password);
-      setSuccessMessage(
-        'Registration successful! Your account has been created.',
-      );
+      setSuccessMessage('Registration successful! Your account has been created.');
     } catch (error: any) {
       handleError(error.message);
     } finally {
@@ -141,14 +131,11 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
         errorMessage,
         successMessage,
         signUp,
-      }}>
+      }}
+    >
       {children}
-      {errorMessage && (
-        <CustomToast type="error" text1="Error" text2={errorMessage} />
-      )}
-      {successMessage && (
-        <CustomToast type="success" text1="Success" text2={successMessage} />
-      )}
+      {errorMessage && <CustomToast type="error" text1="Error" text2={errorMessage} />}
+      {successMessage && <CustomToast type="success" text1="Success" text2={successMessage} />}
     </AuthContext.Provider>
   );
 };
