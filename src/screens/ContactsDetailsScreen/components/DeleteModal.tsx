@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Modal,
-  Text,
-  StyleSheet,
-  Image,
-} from 'react-native';
+import {View, Modal, Text, StyleSheet, Image} from 'react-native';
 import GenericButton from '../../../components/GenericButton';
 
 interface DeleteModalProps {

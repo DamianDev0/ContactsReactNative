@@ -14,6 +14,7 @@ import LoginScreen from '../screens/LoginScreen/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen/SignUpScreen';
 import Loader from '../components/Loader';
 import {RootStackParamList} from '../types/navigation.types';
+import ProfileScreen from '../screens/ProfileScreen/ProfileScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -43,6 +44,11 @@ const MyTabs = () => (
       name="Form"
       component={FormScreen}
       options={{tabBarLabel: 'Add Contact'}}
+    />
+    <Tab.Screen
+      name="Profile"
+      component={ProfileScreen}
+      options={{tabBarLabel: 'Profile'}}
     />
   </Tab.Navigator>
 );

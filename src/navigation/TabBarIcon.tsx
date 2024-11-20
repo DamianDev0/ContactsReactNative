@@ -7,7 +7,7 @@ interface TabBarIconProps {
   size: number;
 }
 
-const TabBarIcon: React.FC<TabBarIconProps> = ({ routeName, color, size }) => {
+const TabBarIcon: React.FC<TabBarIconProps> = ({routeName, color, size}) => {
   let iconName: string;
 
   switch (routeName) {
@@ -16,6 +16,9 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({ routeName, color, size }) => {
       break;
     case 'Form':
       iconName = 'person-add-outline';
+      break;
+    case 'Profile':
+      iconName = 'person-circle-outline';
       break;
     default:
       iconName = 'alert-circle-outline';
