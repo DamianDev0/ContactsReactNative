@@ -26,14 +26,13 @@ const useCurrentLocation = () => {
         setCurrentLocation(newLocation);
         setLoading(false);
 
-        // Guardar la nueva ubicación en AsyncStorage
         try {
           await AsyncStorage.setItem('currentLocation', JSON.stringify(newLocation));
         } catch (error) {
           console.error('Error saving location to AsyncStorage:', error);
         }
 
-        fetchWeather(latitude, longitude);  // Obtener el clima después de obtener la ubicación
+        fetchWeather(latitude, longitude);
       },
       (error) => {
         Alert.alert(
@@ -83,7 +82,6 @@ const useCurrentLocation = () => {
   };
 
   useEffect(() => {
-    // Intenta obtener la ubicación guardada desde AsyncStorage
     const getStoredLocation = async () => {
       try {
         const storedLocation = await AsyncStorage.getItem('currentLocation');
@@ -93,8 +91,9 @@ const useCurrentLocation = () => {
           requestLocationPermission();
         }
       } catch (error) {
-        console.error('Error loading location from AsyncStorage:', error);
-        requestLocationPermission();
+        console.error('Error fetching location from AsyncStorage:', error);
+      } finally {
+        setLoading(false);
       }
     };
 

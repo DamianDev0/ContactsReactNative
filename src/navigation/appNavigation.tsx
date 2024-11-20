@@ -22,8 +22,8 @@ const Tab = createBottomTabNavigator();
 const MyTabs = () => (
   <Tab.Navigator
     screenOptions={({route}) => ({
-      tabBarIcon: ({color, size}) => (
-        <TabBarIcon routeName={route.name} color={color} size={size} />
+      tabBarIcon: ({color}) => (
+        <TabBarIcon routeName={route.name} color={color} />
       ),
       tabBarActiveTintColor: '#5d6d7e',
       tabBarInactiveTintColor: '#000',

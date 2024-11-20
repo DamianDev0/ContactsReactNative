@@ -4,7 +4,7 @@ import {useFormContact} from './hook/UseContactManagerHook';
 import {useNavigation} from '@react-navigation/native';
 import FormInputs from './components/FormInputs';
 import MapModal from './components/MapModal';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -55,7 +55,7 @@ const FormScreen: React.FC = () => {
         />
         <View style={styles.containerButtons}>
           <Icon
-            name="check"
+            name="checkmark-done"
             size={30}
             color="#FFF"
             onPress={onSubmit}
@@ -63,14 +63,7 @@ const FormScreen: React.FC = () => {
             disabled={isSubmitting}
           />
           <Icon
-            name="times"
-            size={30}
-            color="#FFF"
-            onPress={() => navigation.goBack()}
-            style={styles.iconButton}
-          />
-          <Icon
-            name="map-marker"
+            name="location-outline"
             size={30}
             color="#FFF"
             onPress={() => setModalVisible(true)}

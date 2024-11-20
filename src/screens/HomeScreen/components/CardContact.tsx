@@ -12,11 +12,11 @@ const CardContact: React.FC<CardContactProps> = ({item, onPress}) => {
   return (
     <TouchableOpacity onPress={() => onPress(item)} style={styles.contactItem}>
       <View style={styles.contactDetails}>
-        <Icon name="user" size={20} color="#000" style={styles.icon} />
+        <Icon name="user-o" size={20} color="#000" style={styles.icon} />
         <Text style={styles.contactName}>{item.name}</Text>
       </View>
       <View style={styles.contactDetails}>
-        <Icon name="phone" size={20} color="#000" style={styles.icon} />
+        <Icon name="mobile" size={27} color="#000" style={styles.icon} />
         <Text style={styles.contactPhone}>{item.phone}</Text>
       </View>
     </TouchableOpacity>

@@ -114,6 +114,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const logout = async () => {
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('userId');
+    await AsyncStorage.removeItem('currentLocation');
     setToken(null);
     setUserId(null);
     setIsAuthenticated(false);
