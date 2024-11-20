@@ -23,8 +23,9 @@ const getAllContacts = async (
   limit: number,
 ): Promise<Contact[]> => {
   try {
-    const response = await axios.get(`${API_URL}/pagination/${page}/${limit}`, {
-      headers: {Authorization: `Bearer ${token}`},
+    const response = await axios.get(`${API_URL}/pagination`, {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { page, limit },
     });
 
     if (Array.isArray(response.data.data.data)) {

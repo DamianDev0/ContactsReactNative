@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from 'react-native';
 import {RouteProp, useRoute, useNavigation} from '@react-navigation/native';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {Marker, Polyline} from 'react-native-maps';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {RootStackParamList} from '../../types/navigation.types';
 import {useContactDetails} from './hook/ContactDetailsHook';
@@ -21,6 +21,7 @@ import ActionButtons from './components/ActionButtons';
 import WeatherImage from '../../components/WeatherImage';
 import DeleteModal from './components/DeleteModal';
 import useImageUploader from './hook/useImage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type DetailsScreenRouteProp = RouteProp<RootStackParamList, 'Details'>;
 const {width, height} = Dimensions.get('screen');
@@ -30,6 +31,10 @@ const DetailsScreen: React.FC = () => {
   const navigation = useNavigation();
   const {contact} = route.params;
   const {refreshContacts} = useContacts();
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
 
   const {
     contactData,
@@ -49,7 +54,19 @@ const DetailsScreen: React.FC = () => {
     onImageUpload: (photoUrl: string) => (contactData.photo = photoUrl),
     refreshContacts,
   });
+
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+
+  useEffect(() => {
+    const loadCurrentLocation = async () => {
+      const storedLocation = await AsyncStorage.getItem('currentLocation');
+      if (storedLocation) {
+        const location = JSON.parse(storedLocation);
+        setCurrentLocation(location);
+      }
+    };
+    loadCurrentLocation();
+  }, []);
 
   if (loading || uploading) {
     return (
@@ -68,7 +85,6 @@ const DetailsScreen: React.FC = () => {
             onPress={() => navigation.goBack()}>
             <Icon name="arrow-left" size={24} color="white" />
           </TouchableOpacity>
-
           <View style={styles.actionIcons}>
             <TouchableOpacity onPress={() => setModalVisible(true)}>
               <Icon name="edit" size={24} color="white" style={styles.icon} />
@@ -77,7 +93,6 @@ const DetailsScreen: React.FC = () => {
               <Icon name="trash" size={24} color="white" style={styles.icon} />
             </TouchableOpacity>
           </View>
-
           <View style={styles.imageContainer}>
             <TouchableOpacity onPress={selectImage}>
               <Image
@@ -92,7 +107,6 @@ const DetailsScreen: React.FC = () => {
           </View>
           <Text style={styles.name}>{contactData.name}</Text>
           <Text style={styles.role}>{contactData.role}</Text>
-
           <ActionButtons
             email={contactData.email ?? 'Not assigned'}
             phone={contactData.phone ?? 'Not assigned'}
@@ -111,25 +125,52 @@ const DetailsScreen: React.FC = () => {
           </View>
         )}
 
-        {contactData.latitude && contactData.longitude ? (
+        {contactData.latitude && contactData.longitude && currentLocation ? (
           <View style={styles.mapContainer}>
             <MapView
               style={styles.map}
               initialRegion={{
                 latitude: contactData.latitude,
                 longitude: contactData.longitude,
-                latitudeDelta: 0.05,
-                longitudeDelta: 0.05,
+                latitudeDelta: 0.15,
+                longitudeDelta: 0.15,
               }}
-              zoomEnabled={true}
-              scrollEnabled={true}
-              showsCompass={true}>
+              zoomEnabled
+              scrollEnabled
+              showsCompass>
               <Marker
                 coordinate={{
                   latitude: contactData.latitude,
                   longitude: contactData.longitude,
                 }}
-                description="Ubicación del contacto"
+                title="Contact's Location"
+                description={contactData.name || 'Unknown'}>
+                <Image
+                  source={
+                    contactData.photo
+                      ? {uri: contactData.photo}
+                      : require('../../assets/img/avatar.png')
+                  }
+                  style={styles.markerAvatar}
+                />
+              </Marker>
+              <Marker
+                coordinate={currentLocation}
+                pinColor="black"
+                title="Your Current Location"
+                description="This is your current location"
+              />
+              <Polyline
+                coordinates={[
+                  currentLocation,
+                  {
+                    latitude: contactData.latitude,
+                    longitude: contactData.longitude,
+                  },
+                ]}
+                strokeColor="#000"
+                strokeWidth={5}
+                lineDashPattern={[10, 5]}
               />
             </MapView>
           </View>
@@ -154,11 +195,9 @@ const DetailsScreen: React.FC = () => {
           contactLatitude={contactData.latitude || 0}
           contactLongitude={contactData.longitude || 0}
         />
-
         {toastMessage && toastType && (
           <CustomToast text1={toastMessage} type={toastType} />
         )}
-
         <DeleteModal
           visible={isDeleteModalVisible}
           onClose={() => setDeleteModalVisible(false)}
@@ -191,42 +230,22 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 25,
     position: 'relative',
   },
-  backButton: {
-    position: 'absolute',
-    top: 15,
-    left: 20,
-  },
-  actionIcons: {
-    position: 'absolute',
-    top: 15,
-    right: 20,
-    flexDirection: 'row',
-  },
-  icon: {
-    marginLeft: 15,
-  },
+  backButton: {position: 'absolute', top: 15, left: 20},
+  actionIcons: {position: 'absolute', top: 15, right: 20, flexDirection: 'row'},
+  icon: {marginLeft: 15},
   imageContainer: {
     width: 150,
     height: 150,
     borderRadius: 75,
-    backgroundColor: '#fff',
+
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
     marginBottom: 15,
     marginTop: 15,
   },
-  image: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-  },
-  name: {
-    fontSize: 22,
-    fontWeight: '600',
-    marginBottom: 10,
-    color: '#FFF',
-  },
+  image: {width: 140, height: 140, borderRadius: 70},
+  name: {fontSize: 22, fontWeight: '600', marginBottom: 10, color: '#FFF'},
   role: {
     fontSize: 14,
     color: '#808b96',
@@ -249,15 +268,12 @@ const styles = StyleSheet.create({
     elevation: 6,
     marginTop: 10,
   },
-  weatherText: {
-    fontSize: 30,
-    color: '#FFF',
-    marginTop: 10,
-  },
+  weatherText: {fontSize: 30, color: '#FFF', marginTop: 10},
   weatherDescription: {
     fontSize: 14,
     color: '#808b96',
     textTransform: 'capitalize',
+    width: 140,
   },
   mapContainer: {
     width: width * 0.9,
@@ -267,31 +283,24 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignSelf: 'center',
   },
-  map: {
-    flex: 1,
-  },
-
+  map: {flex: 1},
   noLocationContainer: {
     width: width * 0.9,
-    height: 422,
-    borderRadius: 20,
-    overflow: 'hidden',
-    marginBottom: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: height * 0.51,
     alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  noLocationImage: {
-    width: 350,
-    height: 350,
-    resizeMode: 'contain',
-  },
+  noLocationImage: {width: width * 0.7, height: height * 0.4, marginBottom: 10},
   noLocationText: {
-    marginTop: 10,
-    fontSize: 20,
-    color: '#555',
-    fontWeight: 'heavy',
+    fontSize: 16,
+    color: '#808b96',
     textAlign: 'center',
+  },
+  markerAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
 });
 
