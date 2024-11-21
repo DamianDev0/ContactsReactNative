@@ -1,32 +1,39 @@
-import {useState, useEffect} from 'react';
-import {useAuth} from '../../../context/AuthContext';
-import {useNavigation, NavigationProp} from '@react-navigation/native';
-import {RootStackParamList} from '../../../types/navigation.types';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../../context/AuthContext';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../../types/navigation.types';
 
 const useLogin = () => {
-  const {login, loading, errorMessage, isAuthenticated} = useAuth();
+  const { login, loading, errorMessage: globalErrorMessage, isAuthenticated } = useAuth();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleLogin = async () => {
     if (email && password) {
       await login(email, password);
+
       if (isAuthenticated) {
         navigation.navigate('Main');
+        setErrorMessage(null);
+      } else {
+        setErrorMessage(globalErrorMessage);
       }
-      return;
+    } else {
+      setErrorMessage('Please provide both email and password.');
     }
   };
+
   const handleSignUpNavigation = () => {
     navigation.navigate('Signup');
   };
 
   useEffect(() => {
-    if (isAuthenticated && !loading && !errorMessage) {
+    if (isAuthenticated && !loading && !globalErrorMessage) {
       navigation.navigate('Main');
     }
-  }, [isAuthenticated, loading, errorMessage, navigation]);
+  }, [isAuthenticated, loading, globalErrorMessage, navigation]);
 
   return {
     email,

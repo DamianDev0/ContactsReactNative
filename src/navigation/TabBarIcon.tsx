@@ -1,30 +1,29 @@
 import React from 'react';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 interface TabBarIconProps {
   routeName: string;
   color: string;
-  size: number;
 }
 
-const TabBarIcon: React.FC<TabBarIconProps> = ({routeName, color, size}) => {
+const TabBarIcon: React.FC<TabBarIconProps> = ({routeName, color}) => {
   let iconName: string;
 
   switch (routeName) {
     case 'Home':
-      iconName = 'people-outline';
+      iconName = 'address-book';
       break;
     case 'Form':
-      iconName = 'person-add-outline';
+      iconName = 'user-plus';
       break;
     case 'Profile':
-      iconName = 'person-circle-outline';
+      iconName = 'user-circle-o';
       break;
     default:
-      iconName = 'alert-circle-outline';
+      iconName = 'user-circle-o';
   }
 
-  return <Icon name={iconName} color={color} size={size} />;
+  return <Icon name={iconName} color={color} size={22} />;
 };
 
 export default TabBarIcon;

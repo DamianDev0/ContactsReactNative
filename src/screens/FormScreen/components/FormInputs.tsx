@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import InputGeneric from '../../../components/GenericInput';
 import {FormInputsProps} from '../../../types/typesFormComponent';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/Ionicons';
 import RolePicker from './rolePicker';
 
 const FormInputs: React.FC<FormInputsProps> = ({
@@ -48,12 +48,12 @@ const FormInputs: React.FC<FormInputsProps> = ({
 
       <View style={styles.containerButtons}>
         <TouchableOpacity style={styles.photoButton} onPress={selectImage}>
-          <Icon name="image" size={20} color="#fff" />
+          <Icon2 name="image-outline" size={25} color="#fff" />
           <Text style={styles.photoButtonText}>Select Photo</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.photoButton} onPress={takePhoto}>
-          <Icon name="camera" size={20} color="#fff" />
+          <Icon2 name="camera-outline" size={25} color="#fff" />
           <Text style={styles.photoButtonText}>Take Photo</Text>
         </TouchableOpacity>
       </View>

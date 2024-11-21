@@ -57,8 +57,9 @@ const FormRegister: React.FC = () => {
               onChangeText={setPassword}
               opacity={0.6}
               icon="lock"
-            />
-                 {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+            />{errorMessage && (
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            )}
           </View>
           <GenericButton
             title={loading ? 'Loading...' : 'Sign Up'}
