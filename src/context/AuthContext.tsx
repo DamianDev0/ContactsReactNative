@@ -111,9 +111,9 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 
   const logout = async () => {
     await AsyncStorage.multiRemove(['token', 'userId']);
-    setToken(null);
     setUserId(null);
     setIsAuthenticated(false);
+    setToken(null);
   };
 
   return (

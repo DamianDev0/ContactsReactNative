@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import {Dimensions, Image, StyleSheet, Text, View, Alert} from 'react-native';
+import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
 import {useFormContact} from './hook/UseContactManagerHook';
 import {useNavigation} from '@react-navigation/native';
 import FormInputs from './components/FormInputs';
 import MapModal from './components/MapModal';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Toast from 'react-native-toast-message';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -23,11 +24,17 @@ const FormScreen: React.FC = () => {
 
   const onSubmit = async () => {
     try {
-      await handleSubmit();
-      navigation.goBack();
+      const success = await handleSubmit();
+      if (success) {
+        navigation.goBack();
+      }
     } catch (error) {
-      console.error('Error submitting form:', error);
-      Alert.alert('Error', 'Failed to save contact');
+      Toast.show({
+        type: 'error',
+        position: 'bottom',
+        text1: 'Failed to save contact',
+        visibilityTime: 3000,
+      });
     }
   };
 
@@ -83,11 +90,6 @@ const FormScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   container: {
     flex: 1,
     justifyContent: 'flex-start',

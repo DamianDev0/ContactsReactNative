@@ -1,10 +1,11 @@
 import {useState} from 'react';
-import {Alert, Platform} from 'react-native';
+import {Platform} from 'react-native';
 import {Contact} from '../../../interfaces/Contact.interface';
 import * as ImagePicker from 'react-native-image-picker';
 import {request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import {createOneContact} from '../../../services/ContactsManager';
 import {useAuth} from '../../../context/AuthContext';
+import Toast from 'react-native-toast-message';
 
 export const useFormContact = () => {
   const {token} = useAuth();
@@ -19,7 +20,7 @@ export const useFormContact = () => {
     longitude: null,
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);  // Estado para controlar si se está enviando la solicitud
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     setForm({
@@ -39,7 +40,7 @@ export const useFormContact = () => {
 
   const validateForm = () => {
     if (!form.name || !form.phone || !form.email) {
-      Alert.alert('Validation', 'Please fill in all required fields');
+      showToast('error', 'Please fill in all required fields');
       return false;
     }
     return true;
@@ -52,21 +53,20 @@ export const useFormContact = () => {
   ) => {
     handleChange('latitude', latitude);
     handleChange('longitude', longitude);
-    Alert.alert('Location Saved', 'Your location has been saved successfully!');
     setModalVisible(false);
   };
 
-  const handleSubmit = async () => {
-    if (!validateForm() || isSubmitting) {  // Verifica si ya se está enviando
-      return;
+  const handleSubmit = async (): Promise<boolean> => {
+    if (!validateForm() || isSubmitting) {
+      return false;
     }
 
-    setIsSubmitting(true);  // Inicia el proceso de envío
+    setIsSubmitting(true);
 
     try {
       if (!token) {
-        Alert.alert('Authentication Error', 'User not authenticated.');
-        return;
+        showToast('error', 'User not authenticated.');
+        return false;
       }
 
       const formData = new FormData();
@@ -74,12 +74,7 @@ export const useFormContact = () => {
       formData.append('phone', form.phone);
       formData.append('email', form.email);
       formData.append('role', form.role || '');
-      if (
-        form.latitude !== null &&
-        form.latitude !== undefined &&
-        form.longitude !== null &&
-        form.longitude !== undefined
-      ) {
+      if (form.latitude !== null && form.longitude !== null) {
         formData.append('latitude', Number(form.latitude).toString());
         formData.append('longitude', Number(form.longitude).toString());
       }
@@ -92,16 +87,16 @@ export const useFormContact = () => {
         });
       }
 
-      const savedContact = await createOneContact(token, formData);
-      console.log('Contact saved on server:', savedContact);
+      await createOneContact(token, formData);
 
       resetForm();
-      Alert.alert('Success', 'Contact saved successfully!');
+      showToast('success', 'Contact saved successfully!');
+      return true;
     } catch (error) {
-      console.error('Error saving contact:', error);
-      Alert.alert('Error', 'Failed to save contact');
+      showToast('error', 'Failed to save contact');
+      return false;
     } finally {
-      setIsSubmitting(false);  // Termina el proceso de envío
+      setIsSubmitting(false);
     }
   };
 
@@ -113,13 +108,13 @@ export const useFormContact = () => {
           return;
         }
         if (response.errorMessage) {
-          Alert.alert('Error', response.errorMessage);
+          showToast('error', response.errorMessage);
           return;
         }
         if (response.assets && response.assets.length > 0) {
           handleChange('photo', response.assets[0].uri ?? null);
         } else {
-          Alert.alert('Error', 'No image was selected');
+          showToast('error', 'No image was selected');
         }
       },
     );
@@ -145,36 +140,42 @@ export const useFormContact = () => {
           return;
         }
         if (result.errorCode) {
-          Alert.alert(
-            'Camera Error',
-            result.errorMessage || 'Failed to launch camera',
-          );
+          showToast('error', result.errorMessage || 'Failed to launch camera');
           return;
         }
         if (result.assets && result.assets.length > 0) {
           const uri = result.assets[0].uri ?? null;
           handleChange('photo', uri);
         } else {
-          Alert.alert('Error', 'No image was captured');
+          showToast('error', 'No image was captured');
         }
       } else {
         handlePermissionDenied(permissionStatus);
       }
     } catch (error) {
       console.error('Failed to request camera permission', error);
-      Alert.alert('Error', 'Failed to request camera permission');
+      showToast('error', 'Failed to request camera permission');
     }
   };
 
   const handlePermissionDenied = (permissionStatus: string) => {
     if (permissionStatus === RESULTS.DENIED) {
-      Alert.alert('Permission Denied', 'Camera permission is required');
+      showToast('error', 'Camera permission is required');
     } else if (permissionStatus === RESULTS.BLOCKED) {
-      Alert.alert(
-        'Permission Blocked',
+      showToast(
+        'error',
         'Camera permission is permanently denied. Please enable it from settings.',
       );
     }
+  };
+
+  const showToast = (type: 'success' | 'error', message: string) => {
+    Toast.show({
+      type,
+      position: 'bottom',
+      text1: message,
+      visibilityTime: 3000,
+    });
   };
 
   return {

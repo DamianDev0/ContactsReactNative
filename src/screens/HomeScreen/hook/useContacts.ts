@@ -1,11 +1,12 @@
 import {useState, useEffect, useCallback} from 'react';
-import {PermissionsAndroid, Alert} from 'react-native';
+import {PermissionsAndroid} from 'react-native';
 import Contacts from 'react-native-contacts';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Contact} from '../../../interfaces/Contact.interface';
 import {useAuth} from '../../../context/AuthContext';
 import {getAllContacts} from '../../../services/ContactsManager';
+import Toast from 'react-native-toast-message';
 
 const useContacts = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -30,11 +31,11 @@ const useContacts = () => {
       );
       return granted === PermissionsAndroid.RESULTS.GRANTED;
     } catch (error) {
-      console.error('Permission error:', error);
-      Alert.alert(
-        'Permission error',
-        'There was an error requesting contacts permission.',
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Permission error',
+        text2: 'There was an error requesting contacts permission.',
+      });
       return false;
     }
   };
@@ -65,20 +66,35 @@ const useContacts = () => {
         throw new Error('Failed to send contacts');
       }
     } catch (error) {
-      console.error('Error sending contacts:', error);
-      Alert.alert('Error', 'Failed to send contacts to the backend.');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to send contacts to the backend.',
+      });
     }
   };
 
   const loadContacts = useCallback(async () => {
     setLoading(true);
+    if (!token) {
+      Toast.show({
+        type: 'error',
+        text1: 'Not Authenticated',
+        text2: 'Please log in again to access contacts.',
+        position: 'bottom'
+      });
+      setLoading(false);
+      return;
+    }
+
     const permissionGranted = await requestContactsPermission();
 
     if (!permissionGranted) {
-      Alert.alert(
-        'Permission Denied',
-        'Cannot access contacts without permission.',
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Permission Denied',
+        text2: 'Cannot access contacts without permission.',
+      });
       setLoading(false);
       return;
     }
@@ -123,12 +139,15 @@ const useContacts = () => {
         page === 1 ? filteredContacts : [...prevContacts, ...filteredContacts],
       );
     } catch (error) {
-      console.error('Failed to load contacts:', error);
-      Alert.alert('Error', 'Failed to load contacts.');
+      Toast.show({
+        type: 'error',
+        text1: 'Failed to load contacts',
+        text2: 'There was an error while loading the contacts, sorry <3',
+      });
     } finally {
       setLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, token, limit, searchText, searchType]);
 
   const loadMoreContacts = () => {
