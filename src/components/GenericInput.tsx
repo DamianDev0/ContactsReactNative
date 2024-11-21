@@ -13,6 +13,8 @@ interface InputProps extends TextInputProps {
   marginBottom?: number;
   opacity?: number;
   icon?: string;
+  keyboardType?: TextInputProps['keyboardType'];
+  secureTextEntry?: boolean;
 }
 
 const InputGeneric: React.FC<InputProps> = ({
@@ -26,6 +28,8 @@ const InputGeneric: React.FC<InputProps> = ({
   marginBottom,
   opacity = 1,
   icon,
+  keyboardType,
+  secureTextEntry,
 }) => {
   return (
     <View style={[styles.inputContainer, {height, width, marginBottom}]}>
@@ -33,15 +37,14 @@ const InputGeneric: React.FC<InputProps> = ({
         <FontAwesome name={icon} size={20} color="#000" style={styles.icon} />
       )}
       <TextInput
-        style={[
-          styles.input,
-          {height, width, color, opacity},
-        ]}
+        style={[styles.input, {height, width, color, opacity}]}
         placeholder={placeholder}
         placeholderTextColor="rgba(0, 0, 0, 0.5)"
         value={value}
         onChangeText={onChangeText}
         editable={editable}
+        keyboardType={keyboardType}
+        secureTextEntry={secureTextEntry}
       />
     </View>
   );

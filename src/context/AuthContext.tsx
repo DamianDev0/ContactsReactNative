@@ -15,7 +15,7 @@ interface AuthContextProps {
   userId: string | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string,name: string) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
   errorMessage: string | null;
@@ -75,12 +75,12 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     }
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, name: string) => {
     setLoading(true);
     resetMessages();
 
     try {
-      await apiService.register(email, password);
+      await apiService.register(email, password, name);
       setSuccessMessage(
         'Registration successful! Your account has been created.',
       );
@@ -101,6 +101,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     setSuccessMessage(null);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   const storeToken = async (token: string, userId: string) => {
     await AsyncStorage.setItem('token', token);
     await AsyncStorage.setItem('userId', userId);
