@@ -21,6 +21,8 @@ const FormRegister: React.FC = () => {
     setEmail,
     password,
     setPassword,
+    name,
+    setName,
     handleRegister,
     loading,
     errorMessage,
@@ -41,6 +43,15 @@ const FormRegister: React.FC = () => {
         <View style={styles.formContainer}>
           <View style={styles.inputsContainer}>
             <InputGeneric
+              placeholder="Name"
+              width={300}
+              marginBottom={20}
+              value={name}
+              opacity={0.6}
+              onChangeText={setName}
+              icon="user"
+            />
+            <InputGeneric
               placeholder="Email"
               width={300}
               marginBottom={20}
@@ -57,7 +68,8 @@ const FormRegister: React.FC = () => {
               onChangeText={setPassword}
               opacity={0.6}
               icon="lock"
-            />{errorMessage && (
+            />
+            {errorMessage && (
               <Text style={styles.errorText}>{errorMessage}</Text>
             )}
           </View>
@@ -90,7 +102,7 @@ const styles = StyleSheet.create({
   content: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
+    width: width * 0.9,
     height: height * 0.9,
     position: 'relative',
   },
@@ -98,9 +110,8 @@ const styles = StyleSheet.create({
     width: width * 0.9,
     height: height * 0.4,
     position: 'absolute',
-    top: 15,
+    top: 5,
     zIndex: 2,
-
   },
   formContainer: {
     justifyContent: 'center',
@@ -109,7 +120,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     width: width * 0.9,
-    height: 550,
+    height: width  * 1.4,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 5},

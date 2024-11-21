@@ -17,11 +17,13 @@ const apiService = {
   register: async (
     email: string,
     password: string,
+    name: string
   ): Promise<RegisterResponse> => {
     try {
       const response = await axios.post(`${API_URL}/register`, {
         email,
         password,
+        name,
       });
       return response.data;
     } catch (error) {

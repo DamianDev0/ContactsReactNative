@@ -30,6 +30,7 @@ const FormInputs: React.FC<FormInputsProps> = ({
         marginBottom={15}
         height={45}
         icon="phone"
+        keyboardType="phone-pad"
       />
       <InputGeneric
         placeholder="Email"
@@ -39,6 +40,7 @@ const FormInputs: React.FC<FormInputsProps> = ({
         marginBottom={15}
         height={45}
         icon="envelope"
+        keyboardType="email-address"
       />
 
       <RolePicker
