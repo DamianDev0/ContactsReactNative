@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {Modal, View, Text, Alert, StyleSheet} from 'react-native';
+import {Modal, View, Text, StyleSheet} from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import GenericButton from '../../../components/GenericButton';
 import {getWeatherData} from '../../../services/weatherService';
 import WeatherImage from '../../../components/WeatherImage';
+import Toast from 'react-native-toast-message';
+
 interface MapModalProps {
   visible: boolean;
   onClose: () => void;
@@ -19,7 +21,6 @@ const MapModal: React.FC<MapModalProps> = ({visible, onClose, onSave}) => {
   } | null>(null);
   const [weather, setWeather] = useState<any>(null);
 
-
   const handleMapPress = (event: any) => {
     const {latitude, longitude} = event.nativeEvent.coordinate;
     setSelectedLocation({latitude, longitude});
@@ -28,8 +29,19 @@ const MapModal: React.FC<MapModalProps> = ({visible, onClose, onSave}) => {
   const handleSaveLocation = () => {
     if (selectedLocation) {
       onSave(selectedLocation.latitude, selectedLocation.longitude);
+      Toast.show({
+        type: 'success',
+        text1: 'Location Saved!',
+        text2: 'The selected location has been saved successfully.',
+        position: 'bottom',
+      });
     } else {
-      Alert.alert('Please select a location on the map');
+      Toast.show({
+        type: 'error',
+        text1: 'Location Not Selected',
+        text2: 'Please select a location on the map before saving.',
+        position: 'top',
+      });
     }
   };
 
@@ -43,7 +55,11 @@ const MapModal: React.FC<MapModalProps> = ({visible, onClose, onSave}) => {
           );
           setWeather(weatherData);
         } catch (error) {
-          console.error('Error fetching weather data', error);
+          Toast.show({
+            type: 'error',
+            text1: 'Weather Fetch Error',
+            text2: 'There was an error fetching the weather data.',
+          });
         }
       }
     };
