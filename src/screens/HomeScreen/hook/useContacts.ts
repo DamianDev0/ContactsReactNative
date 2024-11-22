@@ -50,7 +50,7 @@ const useContacts = () => {
       const contactData = {contacts: formattedContacts};
 
       const response = await axios.post(
-        'https://closetoyoudeltabackend.onrender.com/api/v1/contacts',
+        'https://unhappy-eba-joji-c93a17a9.koyeb.app/api/v1/contacts',
         contactData,
         {
           headers: {

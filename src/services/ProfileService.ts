@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Alert } from 'react-native';
 
-const API_URL = 'https://closetoyoudeltabackend.onrender.com/api/v1/users';
+const API_URL = 'https://unhappy-eba-joji-c93a17a9.koyeb.app/api/v1/users';
 
 const getHeaders = (token: string) => {
   return {
