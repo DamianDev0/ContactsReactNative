@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import FormLogin from './components/FormLogin';
-import { useAuth } from '../../context/AuthContext';
+import {useAuth} from '../../context/AuthContext';
 
 const LoginScreen = () => {
-  const { loading } = useAuth();
+  const {loading} = useAuth();
 
   return (
     <View style={styles.container}>
@@ -25,6 +25,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
 
 export default LoginScreen;

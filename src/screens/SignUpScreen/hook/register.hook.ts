@@ -13,7 +13,7 @@ const useRegister = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleRegister = async () => {
-    if (email && password) {
+    if (email && password && name) {
       await signUp(email, password, name);
 
       if (!globalErrorMessage) {

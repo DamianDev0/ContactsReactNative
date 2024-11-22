@@ -14,12 +14,25 @@ const RolePicker: React.FC<RolePickerProps> = ({ role, setRole }) => {
         onValueChange={setRole}
         items={[
           { label: 'CUSTOMER', value: 'CUSTOMER' },
+          { label: 'EMPLOYEE', value: 'EMPLOYEE' },
           { label: 'FRIEND', value: 'FRIEND' },
+          { label: 'FAMILY', value: 'FAMILY' },
+          { label: 'COLLEAGUE', value: 'COLLEAGUE' },
+          { label: 'MANAGER', value: 'MANAGER' },
+          { label: 'SUPPLIER', value: 'SUPPLIER' },
+          { label: 'PARTNER', value: 'PARTNER' },
+          { label: 'CLIENT', value: 'CLIENT' },
+          { label: 'MENTOR', value: 'MENTOR' },
+          { label: 'INVESTOR', value: 'INVESTOR' },
+          { label: 'CONTRACTOR', value: 'CONTRACTOR' },
+          { label: 'CONSULTANT', value: 'CONSULTANT' },
+          { label: 'STUDENT', value: 'STUDENT' },
+          { label: 'TEACHER', value: 'TEACHER' },
         ]}
         style={pickerSelectStyles}
         value={role}
         placeholder={{
-          label: 'Role...',
+          label: 'Select Role',
           value: null,
           color: 'black',
         }}
@@ -36,7 +49,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#ccc',
-    right: 80,
+    right: 8,
     zIndex: 1,
     padding: 2,
     width: 150,
@@ -64,7 +77,7 @@ const pickerSelectStyles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   placeholder: {
-    color: '#515a5a',  
+    color: '#515a5a',
   },
 });
 

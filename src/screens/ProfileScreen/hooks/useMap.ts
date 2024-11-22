@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Alert, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 import { getWeatherData } from '../../../services/weatherService';
 import { WeatherResponse } from '../../../types/weather.types';
 
@@ -27,22 +28,29 @@ const useCurrentLocation = () => {
       setWeatherError(null);
     } catch (error) {
       setWeatherError('Error fetching weather data');
-      console.error('Error fetching weather data:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Weather Error',
+        text2: 'Error fetching weather data. Please try again.',
+        position: 'bottom',
+      });
     } finally {
       setWeatherLoading(false);
     }
   }, []);
 
   const updateLocation = useCallback(async (location: Location) => {
-    console.log('Updating location:', location); // Debug
     setCurrentLocation(location);
-
     try {
       await AsyncStorage.setItem('currentLocation', JSON.stringify(location));
-    } catch (error) {
-      console.error('Error saving location to AsyncStorage:', error);
+    } catch {
+      Toast.show({
+        type: 'error',
+        text1: 'Storage Error',
+        text2: 'Failed to save location. Please try again.',
+        position: 'bottom',
+      });
     }
-
     await fetchWeather(location.latitude, location.longitude);
   }, [fetchWeather]);
 
@@ -61,16 +69,23 @@ const useCurrentLocation = () => {
         if (granted === RESULTS.GRANTED) {
           startWatchingLocation();
         } else {
-          Alert.alert(
-            'Permission Denied',
-            'Location permission is required to track your current location.',
-          );
+          Toast.show({
+            type: 'error',
+            text1: 'Permission Denied',
+            text2: 'Location permission is required to track your current location.',
+            position: 'bottom',
+          });
           setLoading(false);
         }
       }
-    } catch (err) {
-      console.warn(err);
+    } catch {
       setLoading(false);
+      Toast.show({
+        type: 'error',
+        text1: 'Permission Error',
+        text2: 'Failed to check location permissions.',
+        position: 'bottom',
+      });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -82,10 +97,12 @@ const useCurrentLocation = () => {
         updateLocation({ latitude, longitude });
       },
       error => {
-        Alert.alert(
-          'Error',
-          `Failed to track your location: ${error.message}. Make sure your location is enabled.`,
-        );
+        Toast.show({
+          type: 'error',
+          text1: 'Location Error',
+          text2: `Failed to track location: ${error.message}.`,
+          position: 'bottom',
+        });
       },
       {
         enableHighAccuracy: true,
@@ -106,8 +123,13 @@ const useCurrentLocation = () => {
         } else {
           requestLocationPermission();
         }
-      } catch (error) {
-        console.error('Error fetching location from AsyncStorage:', error);
+      } catch {
+        Toast.show({
+          type: 'error',
+          text1: 'Load Error',
+          text2: 'Failed to load stored location.',
+          position: 'bottom',
+        });
       } finally {
         setLoading(false);
       }

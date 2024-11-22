@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
-import {View, Modal, Text, StyleSheet, TextInput} from 'react-native';
-import MapView, {Marker, MapPressEvent} from 'react-native-maps';
+import React, {  } from 'react';
+import { View, Modal, Text, StyleSheet, TextInput } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 import GenericButton from '../../../components/GenericButton';
-import {EditModalProps} from '../../../interfaces/EditModal.interface';
+import { EditModalProps } from '../../../interfaces/EditModal.interface';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import useEditContact from '../hook/useEditContact';
 
 const EditModal: React.FC<EditModalProps> = ({
   visible,
@@ -15,23 +16,26 @@ const EditModal: React.FC<EditModalProps> = ({
   contactLatitude,
   contactLongitude,
 }) => {
-  const [name, setName] = useState(contactName);
-  const [phone, setPhone] = useState(contactPhone);
-  const [email, setEmail] = useState(contactEmail);
-  const [latitude, setLatitude] = useState(contactLatitude);
-  const [longitude, setLongitude] = useState(contactLongitude);
-
-  const handleSave = () => {
-    onSave({name, phone, email, latitude, longitude});
-    onClose();
-  };
-
-  const handleMapPress = (event: MapPressEvent) => {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    const {latitude, longitude} = event.nativeEvent.coordinate;
-    setLatitude(latitude);
-    setLongitude(longitude);
-  };
+  const {
+    name,
+    setName,
+    phone,
+    setPhone,
+    email,
+    setEmail,
+    latitude,
+    longitude,
+    handleSave,
+    handleMapPress,
+  } = useEditContact({
+    contactName,
+    contactPhone,
+    contactEmail,
+    contactLatitude,
+    contactLongitude,
+    onSave,
+    onClose,
+  });
 
   return (
     <Modal
@@ -85,7 +89,7 @@ const EditModal: React.FC<EditModalProps> = ({
                 longitudeDelta: 0.0421,
               }}
               onPress={handleMapPress}>
-              <Marker coordinate={{latitude, longitude}} />
+              <Marker coordinate={{ latitude, longitude }} />
             </MapView>
           </View>
 
