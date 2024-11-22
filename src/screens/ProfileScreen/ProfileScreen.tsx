@@ -62,30 +62,34 @@ const ProfileScreen: React.FC = () => {
           {weatherError && <Text style={styles.errorText}>{weatherError}</Text>}
 
           <View style={styles.mapContainer}>
-            <MapView
-              style={styles.map}
-              initialRegion={{
-                latitude: currentLocation?.latitude || 37.78825,
-                longitude: currentLocation?.longitude || -122.4324,
-                latitudeDelta: 0.09,
-                longitudeDelta: 0.04,
-              }}
-            >
-              {currentLocation && (
-                <Marker
-                  draggable
-                  coordinate={currentLocation}
-                  title="Your Location"
-                  description="This is your current location"
-                  pinColor="#000"
-                >
-                  <Image
-                    source={profile.photo ? { uri: profile.photo } : defaultAvatar}
-                    style={styles.markerAvatar}
-                  />
-                </Marker>
-              )}
-            </MapView>
+            {locationLoading ? (
+              <Loader />
+            ) : (
+              <MapView
+                style={styles.map}
+                initialRegion={{
+                  latitude: currentLocation?.latitude || 6.231228,
+                  longitude: currentLocation?.longitude || -75.572735,
+                  latitudeDelta: 0.09,
+                  longitudeDelta: 0.04,
+                }}
+              >
+                {currentLocation && (
+                  <Marker
+                    draggable
+                    coordinate={currentLocation}
+                    title="Your Location"
+                    description="This is your current location"
+                    pinColor="#000"
+                  >
+                    <Image
+                      source={profile.photo ? { uri: profile.photo } : defaultAvatar}
+                      style={styles.markerAvatar}
+                    />
+                  </Marker>
+                )}
+              </MapView>
+            )}
           </View>
 
           <TouchableOpacity

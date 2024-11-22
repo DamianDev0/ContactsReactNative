@@ -125,13 +125,17 @@ const DetailsScreen: React.FC = () => {
           </View>
         )}
 
-        {contactData.latitude && contactData.longitude && currentLocation ? (
+        {contactData.latitude && contactData.longitude ? (
           <View style={styles.mapContainer}>
             <MapView
               style={styles.map}
               initialRegion={{
-                latitude: contactData.latitude,
-                longitude: contactData.longitude,
+                latitude: currentLocation
+                  ? currentLocation.latitude
+                  : contactData.latitude,
+                longitude: currentLocation
+                  ? currentLocation.longitude
+                  : contactData.longitude,
                 latitudeDelta: 0.15,
                 longitudeDelta: 0.15,
               }}
@@ -154,24 +158,28 @@ const DetailsScreen: React.FC = () => {
                   style={styles.markerAvatar}
                 />
               </Marker>
-              <Marker
-                coordinate={currentLocation}
-                pinColor="black"
-                title="Your Current Location"
-                description="This is your current location"
-              />
-              <Polyline
-                coordinates={[
-                  currentLocation,
-                  {
-                    latitude: contactData.latitude,
-                    longitude: contactData.longitude,
-                  },
-                ]}
-                strokeColor="#000"
-                strokeWidth={5}
-                lineDashPattern={[10, 5]}
-              />
+              {currentLocation && (
+                <>
+                  <Marker
+                    coordinate={currentLocation}
+                    pinColor="black"
+                    title="Your Current Location"
+                    description="This is your current location"
+                  />
+                  <Polyline
+                    coordinates={[
+                      currentLocation,
+                      {
+                        latitude: contactData.latitude,
+                        longitude: contactData.longitude,
+                      },
+                    ]}
+                    strokeColor="#000"
+                    strokeWidth={5}
+                    lineDashPattern={[10, 5]}
+                  />
+                </>
+              )}
             </MapView>
           </View>
         ) : (
@@ -211,7 +219,6 @@ const DetailsScreen: React.FC = () => {
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
