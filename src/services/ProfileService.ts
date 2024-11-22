@@ -1,11 +1,11 @@
 import axios from 'axios';
-import {Alert} from 'react-native';
+import { Alert } from 'react-native';
 
 const API_URL = 'https://closetoyoudeltabackend.onrender.com/api/v1/users';
 
 const getHeaders = (token: string) => {
   return {
-    'Content-Type': 'application/json',
+    'Content-Type': 'multipart/form-data',
     Authorization: `Bearer ${token}`,
   };
 };
@@ -18,7 +18,59 @@ const apiService = {
       });
       return response.data;
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.message || error.message || 'Something went wrong');
+      Alert.alert(
+        'Error',
+        error.response?.data?.message ||
+          error.message ||
+          'Something went wrong',
+      );
+      return null;
+    }
+  },
+
+  async updateProfile(
+    token: string,
+    userId: string,
+    name: string | null,
+    phone: string | null,
+    photo: string | null,
+  ) {
+    const formData = new FormData();
+
+    if (name) {
+      formData.append('name', name);
+    }
+
+    if (phone) {
+      formData.append('phone', phone);
+    }
+
+    if (photo) {
+      const photoData = {
+        uri: photo,
+        type: 'image/jpeg',
+        name: 'photo.jpg',
+      };
+
+      formData.append('photo', photoData);
+    }
+
+    try {
+      const response = await axios.patch(`${API_URL}/${userId}`, formData, {
+        headers: {
+          ...getHeaders(token),
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      return response.data;
+    } catch (error: any) {
+      Alert.alert(
+        'Error',
+        error.response?.data?.message ||
+          error.message ||
+          'Something went wrong',
+      );
       return null;
     }
   },

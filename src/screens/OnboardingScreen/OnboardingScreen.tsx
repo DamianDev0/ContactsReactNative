@@ -38,7 +38,7 @@ const OnboardingScreen = () => {
                 animationSource={require('../../assets/animations/AnimationE.json')}
               />
             ),
-            title: 'Welcome to EasyConnect',
+            title: 'Welcome to Close To You',
             subtitle: 'Easily manage your contacts and stay connected.',
           },
           {

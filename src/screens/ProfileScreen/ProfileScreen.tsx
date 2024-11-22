@@ -1,22 +1,19 @@
-import React from 'react';
-import { StyleSheet, View, Text, Dimensions, Image } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, Dimensions, Image, TouchableOpacity } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import useProfileLogic from './hooks/useProfile';
 import Loader from '../../components/Loader';
 import useCurrentLocation from './hooks/useMap';
 import WeatherImage from '../../components/WeatherImage';
+import EditProfileModal from './components/editProfileModal';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const { width, height } = Dimensions.get('window');
 
 const ProfileScreen: React.FC = () => {
-  const { profile, loading: profileLoading } = useProfileLogic();
-  const {
-    currentLocation,
-    loading: locationLoading,
-    weather,
-    weatherLoading,
-    weatherError,
-  } = useCurrentLocation();
+  const { profile, loading: profileLoading, fetchProfile } = useProfileLogic();
+  const { currentLocation, loading: locationLoading, weather, weatherLoading, weatherError } = useCurrentLocation();
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const loading = profileLoading || locationLoading || weatherLoading;
 
@@ -24,6 +21,11 @@ const ProfileScreen: React.FC = () => {
   const defaultName = 'Anonymous User';
   const defaultEmail = 'No email available';
   const defaultPhone = 'No phone available';
+
+  const handleSave = () => {
+    fetchProfile();
+    setIsModalVisible(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -85,8 +87,22 @@ const ProfileScreen: React.FC = () => {
               )}
             </MapView>
           </View>
+
+          <TouchableOpacity
+            style={styles.editIcon}
+            onPress={() => setIsModalVisible(true)}
+          >
+            <Icon name="edit" size={25} color="#FFF" />
+          </TouchableOpacity>
         </>
       )}
+
+      <EditProfileModal
+        visible={isModalVisible}
+        profile={profile || { name: '', phone: '', photo: null }}
+        onSave={handleSave}
+        onClose={() => setIsModalVisible(false)}
+      />
     </View>
   );
 };
@@ -113,8 +129,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   avatar: {
-    width: 200,
-    height: 200,
+    width: width * 0.4,
+    height: height * 0.2,
     borderRadius: 100,
     marginBottom: 15,
     resizeMode: 'cover',
@@ -182,6 +198,14 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     marginTop: 10,
+  },
+  editIcon: {
+    position: 'absolute',
+    top: height * 0.05,
+    right: width * 0.05,
+    padding: 10,
+    borderRadius: 50,
+    elevation: 5,
   },
 });
 

@@ -81,7 +81,7 @@ const useContacts = () => {
         type: 'error',
         text1: 'Not Authenticated',
         text2: 'Please log in again to access contacts.',
-        position: 'bottom'
+        position: 'bottom',
       });
       setLoading(false);
       return;

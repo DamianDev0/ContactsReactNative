@@ -108,9 +108,9 @@ const styles = StyleSheet.create({
   },
   logoImage: {
     width: width * 0.9,
-    height: height * 0.4,
+    height: height * 0.38,
     position: 'absolute',
-    top: 5,
+    top: 0,
     zIndex: 2,
   },
   formContainer: {

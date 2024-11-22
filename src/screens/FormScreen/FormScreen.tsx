@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
-import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
-import {useFormContact} from './hook/UseContactManagerHook';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState } from 'react';
+import { Dimensions, Image, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { useFormContact } from './hook/UseContactManagerHook';
+import { useNavigation } from '@react-navigation/native';
 import FormInputs from './components/FormInputs';
 import MapModal from './components/MapModal';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-toast-message';
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const FormScreen: React.FC = () => {
   const {
@@ -61,21 +61,27 @@ const FormScreen: React.FC = () => {
           takePhoto={takePhoto}
         />
         <View style={styles.containerButtons}>
-          <Icon
-            name="checkmark-done"
-            size={30}
-            color="#FFF"
-            onPress={onSubmit}
-            style={styles.iconButton}
-            disabled={isSubmitting}
-          />
-          <Icon
-            name="location-outline"
-            size={30}
-            color="#FFF"
-            onPress={() => setModalVisible(true)}
-            style={styles.iconButton}
-          />
+          {isSubmitting ? (
+            <ActivityIndicator size="large" color="#FFF" />
+          ) : (
+            <>
+              <Icon
+                name="checkmark-done"
+                size={30}
+                color="#FFF"
+                onPress={onSubmit}
+                style={styles.iconButton}
+                disabled={isSubmitting}
+              />
+              <Icon
+                name="location-outline"
+                size={30}
+                color="#FFF"
+                onPress={() => setModalVisible(true)}
+                style={styles.iconButton}
+              />
+            </>
+          )}
         </View>
       </View>
       <MapModal

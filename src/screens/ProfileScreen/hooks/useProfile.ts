@@ -28,7 +28,7 @@ const useProfileLogic = () => {
     }
   };
 
-  return { profile, loading };
+  return { profile, loading, fetchProfile };
 };
 
 export default useProfileLogic;
