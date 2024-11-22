@@ -2,7 +2,7 @@ import axios from 'axios';
 import {Contact} from '../interfaces/Contact.interface';
 import {ApiResponse} from '../types/apiresponse';
 
-const API_URL = 'https://closetoyoudeltabackend.onrender.com/api/v1/contacts';
+const API_URL = 'https://unhappy-eba-joji-c93a17a9.koyeb.app/api/v1/contacts';
 
 
 const getContactById = async (

@@ -2,7 +2,7 @@ import axios from 'axios';
 import {handleApiError} from '../utils/erronHandler';
 import {LoginResponse, RegisterResponse} from '../types/authtypes';
 
-const API_URL = 'https://closetoyoudeltabackend.onrender.com/api/v1/auth';
+const API_URL = 'https://unhappy-eba-joji-c93a17a9.koyeb.app/api/v1/auth';
 
 const apiService = {
   login: async (email: string, password: string): Promise<LoginResponse> => {
