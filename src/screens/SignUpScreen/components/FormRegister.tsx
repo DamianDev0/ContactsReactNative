@@ -8,6 +8,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from 'react-native';
 import InputGeneric from '../../../components/GenericInput';
 import GenericButton from '../../../components/GenericButton';
@@ -32,62 +33,64 @@ const FormRegister: React.FC = () => {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-      <View style={styles.content}>
-        <Image
-          source={require('../../../assets/img/cartoon2.png')}
-          style={styles.logoImage}
-          resizeMode="contain"
-        />
-        <View style={styles.formContainer}>
-          <View style={styles.inputsContainer}>
-            <InputGeneric
-              placeholder="Name"
-              width={300}
-              marginBottom={20}
-              value={name}
-              opacity={0.6}
-              onChangeText={setName}
-              icon="user"
-            />
-            <InputGeneric
-              placeholder="Email"
-              width={300}
-              marginBottom={20}
-              value={email}
-              opacity={0.6}
-              onChangeText={setEmail}
-              icon="envelope"
-            />
-            <InputGeneric
-              placeholder="Password"
-              width={300}
-              secureTextEntry={true}
-              value={password}
-              onChangeText={setPassword}
-              opacity={0.6}
-              icon="lock"
-            />
-            {errorMessage && (
-              <Text style={styles.errorText}>{errorMessage}</Text>
-            )}
-          </View>
-          <GenericButton
-            title={loading ? 'Loading...' : 'Sign Up'}
-            backgroundColor="#FFF"
-            height={40}
-            color="#000"
-            onPress={handleRegister}
-            disabled={loading}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 100}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.content}>
+          <Image
+            source={require('../../../assets/img/cartoon2.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
           />
-          <TouchableOpacity>
-            <Text style={styles.signupText} onPress={handleLoginNavigation}>
-              Already have an account? Log In
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.formContainer}>
+            <View style={styles.inputsContainer}>
+              <InputGeneric
+                placeholder="Name"
+                width={300}
+                marginBottom={20}
+                value={name}
+                opacity={0.6}
+                onChangeText={setName}
+                icon="user"
+              />
+              <InputGeneric
+                placeholder="Email"
+                width={300}
+                marginBottom={20}
+                value={email}
+                opacity={0.6}
+                onChangeText={setEmail}
+                icon="envelope"
+              />
+              <InputGeneric
+                placeholder="Password"
+                width={300}
+                secureTextEntry={true}
+                value={password}
+                onChangeText={setPassword}
+                opacity={0.6}
+                icon="lock"
+              />
+              {errorMessage && (
+                <Text style={styles.errorText}>{errorMessage}</Text>
+              )}
+            </View>
+            <GenericButton
+              title={loading ? 'Loading...' : 'Sign Up'}
+              backgroundColor="#FFF"
+              height={40}
+              color="#000"
+              onPress={handleRegister}
+              disabled={loading}
+            />
+            <TouchableOpacity>
+              <Text style={styles.signupText} onPress={handleLoginNavigation}>
+                Already have an account? Log In
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
@@ -99,6 +102,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
   },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   content: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -120,7 +129,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     width: width * 0.9,
-    height: width  * 1.4,
+    height: width * 1.4,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 5},

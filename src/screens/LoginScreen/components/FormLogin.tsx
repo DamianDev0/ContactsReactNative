@@ -8,8 +8,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  ScrollView,
 } from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import InputGeneric from '../../../components/GenericInput';
 import GenericButton from '../../../components/GenericButton';
 import useLogin from '../hook/login.hook';
@@ -28,15 +28,13 @@ const FormLogin: React.FC = () => {
     handleSignUpNavigation,
   } = useLogin();
 
-  const handleGoogleLogin = () => {
-    console.log('Google login pressed');
-  };
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 100}>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.content}>
         <Image
           source={require('../../../assets/img/cartoon.png')}
@@ -67,21 +65,6 @@ const FormLogin: React.FC = () => {
               <Text style={styles.errorText}>{errorMessage}</Text>
             )}
           </View>
-          <View style={styles.dividerContainer}>
-            <View style={styles.divider} />
-            <Text style={styles.orText}>Or continue with</Text>
-            <View style={styles.divider} />
-          </View>
-          <TouchableOpacity
-            style={styles.googleButton}
-            onPress={handleGoogleLogin}>
-            <FontAwesome
-              name="google"
-              size={20}
-              color="#000"
-              style={styles.googleIcon}
-            />
-          </TouchableOpacity>
           <GenericButton
             title={loading ? 'Loading...' : 'Log in'}
             backgroundColor="#FFF"
@@ -97,6 +80,7 @@ const FormLogin: React.FC = () => {
           </TouchableOpacity>
         </View>
       </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
@@ -129,7 +113,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     width: width * 0.9,
-    height: 610,
+    height: width * 1.4,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 5},
@@ -137,7 +121,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     padding: 30,
     elevation: 8,
-    marginTop: 100,
+    marginTop: 10,
   },
   errorText: {
     color: '#a93226',
@@ -149,37 +133,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 30,
-    width: '100%',
-    marginTop: 210,
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 15,
-    width: 300,
-  },
-  divider: {
-    flex: 0.9,
-    height: 1,
-    backgroundColor: '#FFF',
-  },
-  orText: {
-    marginHorizontal: 10,
-    fontSize: 12,
-    color: '#FFF',
-  },
-  googleButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 50,
-    width: 50,
-    height: 50,
-    marginVertical: 10,
-  },
-  googleIcon: {
-    alignSelf: 'center',
+    width: width * 1,
+    marginTop: 170,
   },
   signupText: {
     marginTop: 15,
@@ -187,6 +142,11 @@ const styles = StyleSheet.create({
     fontSize: 10,
     textDecorationLine: 'underline',
     textAlign: 'center',
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
